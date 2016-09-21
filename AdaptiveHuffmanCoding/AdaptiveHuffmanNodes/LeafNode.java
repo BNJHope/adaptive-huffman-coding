@@ -1,3 +1,5 @@
+package AdaptiveHuffmanCoding.AdaptiveHuffmanNodes;
+
 /**
  * Represents a leaf node in the Huffman tree.
  */

@@ -1,3 +1,5 @@
+package AdaptiveHuffmanCoding.AdaptiveHuffmanNodes;
+
 /**
  * Structure for a node in a tree for adaptive Huffman coding.
  */
