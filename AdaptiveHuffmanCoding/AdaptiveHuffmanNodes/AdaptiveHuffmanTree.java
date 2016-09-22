@@ -74,5 +74,5 @@ public class AdaptiveHuffmanTree {
         oldParent.setLeftChild(newParentNode);
 
         return newCharNode;
-    }
+    }.
 }
