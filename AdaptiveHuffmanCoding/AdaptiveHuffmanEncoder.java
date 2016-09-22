@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 
 public class AdaptiveHuffmanEncoder {
 
+
     /**
      * Compresses the given file using Adaptive Huffman Encoding.
      * @param filename The name of the file to be compressed.
