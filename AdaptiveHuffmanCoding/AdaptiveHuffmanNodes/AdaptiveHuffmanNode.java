@@ -59,7 +59,7 @@ public class AdaptiveHuffmanNode {
     public AdaptiveHuffmanNode(int nodeId, int character){
         this.nodeId = nodeId;
         this.character = character;
-        this.freq = 0;
+        this.freq = 1;
         this.leftChild = null;
         this.rightChild = null;
     }
@@ -166,6 +166,24 @@ public class AdaptiveHuffmanNode {
         this.freq++;
     }
 
+//    /**
+//     * Updates the frequency. Returns true if it was able to, returns false if it was unable to as it had no child nodes.
+//     */
+//    public int updateFrequency(){
+//        //the new frequency of this node.
+//        int result;
+//
+//        //if this node has a left child and a right child then set its new frequency to to sum of its children
+//        if(this.leftChild != null && this.rightChild != null) {
+//            this.freq = this.leftChild.updateFrequency() + this.rightChild.updateFrequency();
+//            result =  this.freq;
+//        } else {
+//            result = this.freq;
+//        }
+//
+//        return result;
+//    }
+
     /**
      * Checks this node and the child nodes of this node to see if it contains the character that is being searched for and if it does then returns the resulting node.
      * @param charToFind
@@ -180,14 +198,16 @@ public class AdaptiveHuffmanNode {
         if(this.character == charToFind)
             result = this;
 
-        //if this node does not contain the character and it has a left child then search the left child.
-        if(result == null && this.leftChild != null)
-            result = leftChild.getRequiredNode(charToFind);
-
-        //if this node and its left child do not contain the character being searched for and this node has a right child
-        //then search for the character in the right child.
+        //if this node does not contain the character and it has a right child then search the right child.
+        //if the child is on the right then it should have a higher frequency and therefore it holds a higher
+        //probability that the character to be searched for is on a right child node
         if(result == null && this.rightChild != null)
-            result = this.rightChild.getRequiredNode(charToFind);
+            result = rightChild.getRequiredNode(charToFind);
+
+        //if this node and its right child do not contain the character being searched for and this node has a left child
+        //then search for the character in the left child.
+        if(result == null && this.leftChild != null)
+            result = this.leftChild.getRequiredNode(charToFind);
 
         return result;
     }
