@@ -177,7 +177,65 @@ public class AdaptiveHuffmanTree {
             newList.addFirst(node);
         }
 
+    }
 
+    /**
+     * Checks if the node passed to the function has the highest ID number in its weight group or not and thus if it
+     * needs to be changed.
+     * @param nodeToCheck The node to check.
+     * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
+     */
+    private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
 
+        //gets the last element of the weight group
+        AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
+
+        return (highestIdNodeInWeightGroup == nodeToCheck);
+    }
+
+    /**
+     * Swaps the two nodes passed to the function in the adaptive huffman tree.
+     * @param firstNode The first node to be swapped.
+     * @param secondNode The second node to be swapped.
+     */
+    private void swapNodesInTree(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
+        //the parent node of the first node
+        AdaptiveHuffmanNode firstParentNode = firstNode.getParentNode();
+
+        //the parent node of the second node
+        AdaptiveHuffmanNode secondParentNode = secondNode.getParentNode();
+
+        //swap space for the id numbers when they need to be swapped
+        int idSwapSpace;
+
+        //if the first node's parent node has the right child as the first node then make sure the new right child is
+        //the second node
+        if(firstParentNode.getRightChild() == firstNode)
+            firstParentNode.setRightChild(secondNode);
+
+        //if the first node's parent node has the left child as the first node then make sure the new left child is
+        //the second node
+        else if(firstParentNode.getLeftChild() == firstNode)
+            firstParentNode.setLeftChild(secondNode);
+
+        //if neither of its children are equal to the first node then throw an exception since one of the children of
+        //the parent node should have been the first child
+        else
+            throw new ParentDoesNotMatchChildException();
+
+        //if the first node's parent node has the right child as the first node then make sure the new right child is
+        //the second node
+        if(firstParentNode.getRightChild() == firstNode)
+            firstParentNode.setRightChild(secondNode);
+
+            //if the first node's parent node has the left child as the first node then make sure the new left child is
+            //the second node
+        else if(firstParentNode.getLeftChild() == firstNode)
+            firstParentNode.setLeftChild(secondNode);
+
+            //if neither of its children are equal to the first node then throw an exception since one of the children of
+            //the parent node should have been the first child
+        else
+            throw new ParentDoesNotMatchChildException();
     }
 }
