@@ -49,7 +49,7 @@ public class AdaptiveHuffmanTree {
      * new character node is added as its sibling.
      * @param charToAdd The character to add to the tree.
      */
-    public void addCharToTree(char charToAdd){
+    public void addCharToTree(char charToAdd) throws ParentDoesNotMatchChildException {
 
         //tries to find if the character is already in the tree by checking all of the child nodes.
         AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(charToAdd);
@@ -61,15 +61,13 @@ public class AdaptiveHuffmanTree {
         //otherwise, check to see if the node needs to be replaced anywhere before incrementing frequency.
         if(nodeToEdit == null) {
             nodeToEdit = this.createNewNode(charToAdd);
+            addNodeToList(nodeToEdit, 1);
         } else {
             updateNode(nodeToEdit);
         }
 
-        //get the parent node of the node which is being changed.
-        parentNode = nodeToEdit.getParentNode();
-
         //while there is a parent node
-
+        while()
         //update the parent node and its position
 
     }
@@ -78,12 +76,16 @@ public class AdaptiveHuffmanTree {
      * Updates the node and its position in the tree when another occurence of it happens.
      * @param node
      */
-    private void updateNode(AdaptiveHuffmanNode node){
+    private void updateNode(AdaptiveHuffmanNode node) throws ParentDoesNotMatchChildException {
 
         //if the node is the highest in the group then
         //edit the lists position in the list group
         if(!this.isHighestInWeightGroup(node)){
             this.editListPosition(node);
+        } else {
+            //removes the node from its previous list and adds it to its new list
+            this.nodeWeightGroups.get(node.getFreq()).remove(node);
+            this.addNodeToList(node, node.getFreq() + 1);
         }
     }
 
