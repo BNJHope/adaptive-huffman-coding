@@ -62,46 +62,29 @@ public class AdaptiveHuffmanTree {
         if(nodeToEdit == null) {
             nodeToEdit = this.createNewNode(charToAdd);
         } else {
-            nodeToEdit.incrementFrequency();
-        }
-
-        //if the node does not already exist in the tree then create a new node using the character handed to it
-        if(nodeToEdit == null) {
-            nodeToEdit = constructNewNode(charToAdd);
-        } else {
-            nodeToEdit.incrementFrequency();
+            updateNode(nodeToEdit);
         }
 
         //get the parent node of the node which is being changed.
         parentNode = nodeToEdit.getParentNode();
 
         //while there is a parent node
-        while(parentNode != null){
-            parentNode = nodeToEdit.getParentNode();
 
-        }
+        //update the parent node and its position
+
     }
 
     /**
-     * Constructs a new branch from the new character
-     * @param charToAdd The character to be added to the branch.
-     * @return A reference to the new node to be added.
+     * Updates the node and its position in the tree when another occurence of it happens.
+     * @param node
      */
-    public AdaptiveHuffmanNode constructNewNode(char charToAdd){
+    private void updateNode(AdaptiveHuffmanNode node){
 
-        //gets the current parent node for the NYT node so its child nodes can be changed afterwards.
-        AdaptiveHuffmanNode oldParent = this.NYTNode.getParentNode();
-
-        //the new Huffman node to be added to the tree.
-        AdaptiveHuffmanNode newCharNode = new AdaptiveHuffmanNode(1, (int) charToAdd);
-
-        //the new parent node to be added to the tree.
-        AdaptiveHuffmanNode newParentNode = new AdaptiveHuffmanNode(2, this.NYTNode, newCharNode);
-
-        //sets the left child of the old parent node to the new parent node.
-        oldParent.setLeftChild(newParentNode);
-
-        return newCharNode;
+        //if the node is the highest in the group then
+        //edit the lists position in the list group
+        if(!this.isHighestInWeightGroup(node)){
+            this.editListPosition(node);
+        }
     }
 
     /**
@@ -156,6 +139,33 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
+     * Changes position in the frequency group lists and if so then carry out
+     * the changes.
+     * @param node The node to change list position for.
+     */
+    public void editListPosition(AdaptiveHuffmanNode node) throws ParentDoesNotMatchChildException {
+
+        //get the linkedlist which holds the node passed to the function.
+        LinkedList<AdaptiveHuffmanNode> firstList = this.nodeWeightGroups.get(node.getFreq());
+
+        //the position of the node in the linkedlist.
+        int position = firstList.indexOf(node);
+
+        //the node at the end of the linked list, ie the one with the highest ID
+        //now removed from the end of the list
+        AdaptiveHuffmanNode highestNode = firstList.removeLast();
+
+        //swap the two nodes in the tree position
+        this.swapNodesInTree(node, highestNode);
+
+        //put the highest node into the replace position
+        firstList.add(position, highestNode);
+
+        //add the node to its new list
+        this.addNodeToList(node, node.getFreq() + 1);
+    }
+
+    /**
      * Adds the new node to the list of other nodes with the same new frequency as this node.
      * @param node The node to add to the new list.
      * @param newFrequency The new frequency of the node, and thus the key in the hashmap of the new list where the node should be added.
@@ -186,10 +196,11 @@ public class AdaptiveHuffmanTree {
      * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
-
         //gets the last element of the weight group
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
+        //returns whether the reference to the highest weight in the group matches the reference to the node handed
+        //to the function
         return (highestIdNodeInWeightGroup == nodeToCheck);
     }
 
@@ -199,29 +210,44 @@ public class AdaptiveHuffmanTree {
      * @param secondNode The second node to be swapped.
      */
     private void swapNodesInTree(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
+
+        //swap the ids of the two nodes first
+        this.swapIds(firstNode, secondNode);
+
+        //then swap the parents of the two nodes
+        this.swapParents(firstNode, secondNode);
+    }
+
+    /**
+     * Swaps the IDs of the two nodes given to the function.
+     * @param firstNode The first node to be swapped.
+     * @param secondNode The second node to be swapped.
+     */
+    private void swapIds(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode){
+        //swap space for the id numbers when they need to be swapped
+        int idSwapSpace = firstNode.getNodeId();
+
+        //set the first node's id to the second node.
+        firstNode.setNodeId(secondNode.getNodeId());
+
+        //set the second node's id to the first node's by using the id held in the swap space.
+        secondNode.setNodeId(idSwapSpace);
+
+    }
+
+    /**
+     * Swaps the parents of the two nodes handed to the function.
+     * @param firstNode The first node to be swapped.
+     * @param secondNode The second node to be swapped.
+     * @throws ParentDoesNotMatchChildException If there is an error in figuring out if a node is a either the left or right child of a parent,
+     * then this exception is thrown.
+     */
+    private void swapParents(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
         //the parent node of the first node
         AdaptiveHuffmanNode firstParentNode = firstNode.getParentNode();
 
         //the parent node of the second node
         AdaptiveHuffmanNode secondParentNode = secondNode.getParentNode();
-
-        //swap space for the id numbers when they need to be swapped
-        int idSwapSpace;
-
-        //if the first node's parent node has the right child as the first node then make sure the new right child is
-        //the second node
-        if(firstParentNode.getRightChild() == firstNode)
-            firstParentNode.setRightChild(secondNode);
-
-        //if the first node's parent node has the left child as the first node then make sure the new left child is
-        //the second node
-        else if(firstParentNode.getLeftChild() == firstNode)
-            firstParentNode.setLeftChild(secondNode);
-
-        //if neither of its children are equal to the first node then throw an exception since one of the children of
-        //the parent node should have been the first child
-        else
-            throw new ParentDoesNotMatchChildException();
 
         //if the first node's parent node has the right child as the first node then make sure the new right child is
         //the second node
@@ -232,6 +258,21 @@ public class AdaptiveHuffmanTree {
             //the second node
         else if(firstParentNode.getLeftChild() == firstNode)
             firstParentNode.setLeftChild(secondNode);
+
+            //if neither of its children are equal to the first node then throw an exception since one of the children of
+            //the parent node should have been the first child
+        else
+            throw new ParentDoesNotMatchChildException();
+
+        //if the second node's parent node has the right child as the second node then make sure the new right child is
+        //the first node
+        if(secondParentNode.getRightChild() == secondNode)
+            secondParentNode.setRightChild(firstNode);
+
+            //if the second node's parent node has the right child as the first node then make sure the new left child is
+            //the first node
+        else if(secondParentNode.getLeftChild() == secondNode)
+            secondParentNode.setLeftChild(firstNode);
 
             //if neither of its children are equal to the first node then throw an exception since one of the children of
             //the parent node should have been the first child
