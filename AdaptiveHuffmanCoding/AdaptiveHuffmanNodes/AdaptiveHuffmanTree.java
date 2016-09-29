@@ -44,6 +44,44 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
+     * Gets the Huffman code of that given character.
+     * @param charToGet The character to retrieve from the tree.
+     * @return The Huffman code to be returned.
+     */
+    public String getHuffmanCode(char charToGet) {
+        //the result string
+        String result = "";
+
+        //determines whether the root node has been found or not for the string
+        boolean rootNodeFound = false;
+
+        //the current node being looked at
+        AdaptiveHuffmanNode currentNode = this.nodeArray[(int) charToGet], parentNode = currentNode.getParentNode();
+
+        //while the root node has not been found
+        while(!rootNodeFound) {
+
+            //if the child node is the parent's right child then add a 1 to the start of the string
+            //otherwise, add a 0 to the begininng of the string
+            result = parentNode.getRightChild() == currentNode ? "1" + result: "0" + result;
+
+            //if the parent node is the root node of the tree then the tree does not need to be navigated
+            //anymore and so the loop can be exited
+            if(this.isRoot(parentNode)){
+                rootNodeFound = true;
+            } else {
+                //otherwise, move the pointers up the tree
+                currentNode = parentNode;
+                parentNode = currentNode.getParentNode();
+            }
+
+        }
+
+        //return the resulting string
+        return result;
+    }
+
+    /**
      * Edits the tree based on the given character. If the character already exists in the tree, then it increments its
      * frequency and checks that the tree is still in order. Otherwise, the NYT node is changed with a new parent node and the
      * new character node is added as its sibling.
@@ -54,8 +92,11 @@ public class AdaptiveHuffmanTree {
         //tries to find if the character is already in the tree by checking all of the child nodes.
         AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(charToAdd);
 
-        //the parent node that is currently being held.
-        AdaptiveHuffmanNode parentNode;
+        //holds a reference to the node which is being checked when navigating up the tree
+        AdaptiveHuffmanNode nodeHolder = nodeToEdit;
+
+        //determines whether the root node has been found or not
+        boolean rootNodeFound = false;
 
         //if it is a new character for the tree then add it to NYT.
         //otherwise, check to see if the node needs to be replaced anywhere before incrementing frequency.
@@ -64,11 +105,19 @@ public class AdaptiveHuffmanTree {
             addNodeToList(nodeToEdit, 1);
         } else {
             updateNode(nodeToEdit);
+            nodeToEdit.incrementFrequency();
         }
 
         //while there is a parent node
-        while()
-        //update the parent node and its position
+        while(!rootNodeFound) {
+            //update the parent node and its position
+            nodeHolder = nodeHolder.getParentNode();
+            updateNode(nodeHolder);
+            nodeHolder.incrementFrequency();
+            if(this.isRoot(nodeHolder))
+                rootNodeFound = true;
+        }
+
 
     }
 
