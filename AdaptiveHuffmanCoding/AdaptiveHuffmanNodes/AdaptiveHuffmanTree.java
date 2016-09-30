@@ -190,7 +190,6 @@ public class AdaptiveHuffmanTree {
         //the new Id for the NYT node
         this.NYTNode.setNodeId(newParentNode.getNodeId() - 2);
 
-        this.NYTNode.setNodeId();
         //sets the new node's parent node as the new parent node.
         newNode.setParentNode(newParentNode);
 
