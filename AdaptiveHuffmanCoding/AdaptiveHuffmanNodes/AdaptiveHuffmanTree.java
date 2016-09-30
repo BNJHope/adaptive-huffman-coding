@@ -9,6 +9,11 @@ import java.util.LinkedList;
 public class AdaptiveHuffmanTree {
 
     /**
+     * The ID of the next node
+     */
+    private int nextNodeId;
+
+    /**
      * The root node of the application.
      * The NYT node of the application
      */
@@ -20,7 +25,7 @@ public class AdaptiveHuffmanTree {
      * the space where a character should be.
      * Also allows O(1) for searching for node as each node is indexed in the array by the integer representation of its character.
      */
-    private AdaptiveHuffmanNode[] nodeArray = new AdaptiveHuffmanNode[256];
+    private AdaptiveHuffmanNode[] nodeArray = new AdaptiveHuffmanNode[127];
 
     /**
      * Maps frequency (weight) of a node to a list of the nodes which have this frequency.
@@ -33,7 +38,7 @@ public class AdaptiveHuffmanTree {
      */
     public AdaptiveHuffmanTree(){
         //makes the initial NYT node for the tree.
-        AdaptiveHuffmanNode NYT = new AdaptiveHuffmanNode(0, 0);
+        AdaptiveHuffmanNode NYT = new AdaptiveHuffmanNode(127, 0);
 
         //since the frequency is set to 1 by default, we need to set the NYT node frequency to 0.
         NYT.setFreq(0);
@@ -41,6 +46,8 @@ public class AdaptiveHuffmanTree {
         //set the root node and the NYT node to 0.
         this.root = NYT;
         this.NYTNode = NYT;
+
+        this.nextNodeId = 126;
     }
 
     /**
@@ -171,11 +178,19 @@ public class AdaptiveHuffmanTree {
     private AdaptiveHuffmanNode createNewNode(char charToAdd){
 
         //the new node to be added to the tree.
-        AdaptiveHuffmanNode newNode = new AdaptiveHuffmanNode(1, charToAdd);
+        AdaptiveHuffmanNode newNode = new AdaptiveHuffmanNode(this.nextNodeId, charToAdd);
 
         //the new parent node which will replace the position of the NYT node in the tree.
-        AdaptiveHuffmanNode newParentNode = new AdaptiveHuffmanNode(2, this.NYTNode, newNode);
+        AdaptiveHuffmanNode newParentNode = new AdaptiveHuffmanNode(this.NYTNode.getNodeId(), this.NYTNode, newNode);
 
+        //we have added 2 new nodes - therefore we need to change the next node ID to 2 lower
+        //than it previously was
+        this.nextNodeId -= 2;
+
+        //the new Id for the NYT node
+        this.NYTNode.setNodeId(newParentNode.getNodeId() - 2);
+
+        this.NYTNode.setNodeId();
         //sets the new node's parent node as the new parent node.
         newNode.setParentNode(newParentNode);
 
