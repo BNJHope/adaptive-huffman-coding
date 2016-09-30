@@ -209,8 +209,9 @@ public class AdaptiveHuffmanTree {
         //swap the two nodes in the tree position
         this.swapNodesInTree(node, highestNode);
 
-        //put the highest node into the replace position
-        firstList.add(position, highestNode);
+        //set the replace position to the highest node, which
+        //replaces the node to be removed
+        firstList.set(position, highestNode);
 
         //add the node to its new list
         this.addNodeToList(node, node.getFreq() + 1);
