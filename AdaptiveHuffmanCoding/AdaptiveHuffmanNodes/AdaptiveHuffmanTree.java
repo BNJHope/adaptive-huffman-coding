@@ -20,12 +20,12 @@ public class AdaptiveHuffmanTree {
     private AdaptiveHuffmanNode root, NYTNode;
 
     /**
-     * An array that holds a reference to each node in the tree to save time by searching the tree for a specific node.
-     * Allows an O(1) check time for determining if a node is in the tree or not as it can check whether the array is null at
-     * the space where a character should be.
-     * Also allows O(1) for searching for node as each node is indexed in the array by the integer representation of its character.
+     * A hasmap that holds a reference to each node in the tree to save time by searching the tree for a specific node.
+     * Allows an O(1) check time for determining if a node is in the tree or not as it can check whether the hashmap is null at
+     * the space where a value should be.
+     * Also allows O(1) for searching for node as each node is indexed in the hashmap by the integer representation of its value.
      */
-    private AdaptiveHuffmanNode[] nodeArray = new AdaptiveHuffmanNode[127];
+    private HashMap<String, AdaptiveHuffmanNode> nodeArray = new HashMap();
 
     /**
      * Maps frequency (weight) of a node to a list of the nodes which have this frequency.
@@ -38,7 +38,7 @@ public class AdaptiveHuffmanTree {
      */
     public AdaptiveHuffmanTree(){
         //makes the initial NYT node for the tree.
-        AdaptiveHuffmanNode NYT = new AdaptiveHuffmanNode(127, 0);
+        AdaptiveHuffmanNode NYT = new AdaptiveHuffmanNode(127, "");
 
         //since the frequency is set to 1 by default, we need to set the NYT node frequency to 0.
         NYT.setFreq(0);
@@ -51,11 +51,11 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
-     * Gets the Huffman code of that given character.
-     * @param charToGet The character to retrieve from the tree.
+     * Gets the Huffman code of that given value.
+     * @param valueToGet The value to retrieve from the tree.
      * @return The Huffman code to be returned.
      */
-    public String getHuffmanCode(char charToGet) {
+    public String getHuffmanCode(String valueToGet) {
         //the result string
         String result = "";
 
@@ -63,7 +63,7 @@ public class AdaptiveHuffmanTree {
         boolean rootNodeFound = false;
 
         //the current node being looked at
-        AdaptiveHuffmanNode currentNode = this.nodeArray[(int) charToGet], parentNode = currentNode.getParentNode();
+        AdaptiveHuffmanNode currentNode = this.nodeArray.get(valueToGet), parentNode = currentNode.getParentNode();
 
         //while the root node has not been found
         while(!rootNodeFound) {
@@ -89,15 +89,15 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
-     * Edits the tree based on the given character. If the character already exists in the tree, then it increments its
+     * Edits the tree based on the given value. If the value already exists in the tree, then it increments its
      * frequency and checks that the tree is still in order. Otherwise, the NYT node is changed with a new parent node and the
-     * new character node is added as its sibling.
-     * @param charToAdd The character to add to the tree.
+     * new value node is added as its sibling.
+     * @param valueToAdd The value to add to the tree.
      */
-    public void addCharToTree(char charToAdd) throws ParentDoesNotMatchChildException {
+    public void addCharToTree(String valueToAdd) throws ParentDoesNotMatchChildException {
 
-        //tries to find if the character is already in the tree by checking all of the child nodes.
-        AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(charToAdd);
+        //tries to find if the value is already in the tree by checking all of the child nodes.
+        AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(valueToAdd);
 
         //holds a reference to the node which is being checked when navigating up the tree
         AdaptiveHuffmanNode nodeHolder = nodeToEdit;
@@ -105,10 +105,10 @@ public class AdaptiveHuffmanTree {
         //determines whether the root node has been found or not
         boolean rootNodeFound = false;
 
-        //if it is a new character for the tree then add it to NYT.
+        //if it is a new value for the tree then add it to NYT.
         //otherwise, check to see if the node needs to be replaced anywhere before incrementing frequency.
         if(nodeToEdit == null) {
-            nodeToEdit = this.createNewNode(charToAdd);
+            nodeToEdit = this.createNewNode(valueToAdd);
             addNodeToList(nodeToEdit, 1);
         } else {
             updateNode(nodeToEdit);
@@ -146,17 +146,14 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
-     * Gets the node from the tree that is associated with the character passed to the function.
-     * @param charToFind The character to find in the tree.
-     * @return If the character has already been seen, then this function returns the node that represents that character in the tree.
+     * Gets the node from the tree that is associated with the value passed to the function.
+     * @param valueToFind The value to find in the tree.
+     * @return If the value has already been seen, then this function returns the node that represents that value in the tree.
      * Otherwise, it returns null.
      */
-    private AdaptiveHuffmanNode getNodeFromTree(char charToFind){
-        //converts the character handed to the function into an integer address to be used with the array.
-        int addressOfNode = (int) charToFind;
-
-        //returns the contents of the array at the address.
-        return this.nodeArray[addressOfNode];
+    private AdaptiveHuffmanNode getNodeFromTree(String valueToFind){
+        //returns the contents of the hashmap at the address.
+        return this.nodeArray.get(valueToFind);
     }
 
     /**
@@ -172,13 +169,13 @@ public class AdaptiveHuffmanTree {
 
     /**
      * Spawns a new node using the NYT node of the tree and gives back a reference to this new node.
-     * @param charToAdd The character to add to the tree.
+     * @param valueToAdd The value to add to the tree.
      * @return A reference to the new node which was just added.
      */
-    private AdaptiveHuffmanNode createNewNode(char charToAdd){
+    private AdaptiveHuffmanNode createNewNode(String valueToAdd) throws ParentDoesNotMatchChildException {
 
         //the new node to be added to the tree.
-        AdaptiveHuffmanNode newNode = new AdaptiveHuffmanNode(this.nextNodeId, charToAdd);
+        AdaptiveHuffmanNode newNode = new AdaptiveHuffmanNode(this.nextNodeId, valueToAdd);
 
         //the new parent node which will replace the position of the NYT node in the tree.
         AdaptiveHuffmanNode newParentNode = new AdaptiveHuffmanNode(this.NYTNode.getNodeId(), this.NYTNode, newNode);
@@ -193,8 +190,14 @@ public class AdaptiveHuffmanTree {
         //sets the new node's parent node as the new parent node.
         newNode.setParentNode(newParentNode);
 
-        //sets the old parent node's left child as the new parent node
-        this.NYTNode.getParentNode().setLeftChild(newParentNode);
+        if(this.NYTNode.getParentNode().getLeftChild() == this.NYTNode) {
+            //sets the old parent node's left child as the new parent node
+            this.NYTNode.getParentNode().setLeftChild(newParentNode);
+        } else if (this.NYTNode.getParentNode().getRightChild() == this.NYTNode) {
+            this.NYTNode.getParentNode().setRightChild(newParentNode);
+        } else {
+            throw new ParentDoesNotMatchChildException();
+        }
 
         //sets the NYT's new parent as the new parent node.
         this.NYTNode.setParentNode(newParentNode);

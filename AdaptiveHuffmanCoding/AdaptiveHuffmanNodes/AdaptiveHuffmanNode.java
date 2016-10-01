@@ -16,9 +16,9 @@ public class AdaptiveHuffmanNode {
     private int nodeId;
 
     /**
-     * The character which the Huffman node represents.
+     * The value which the Huffman node represents.
      */
-    private int character;
+    private String value;
 
     /**
      * The left child node of this Huffman Node.
@@ -45,7 +45,7 @@ public class AdaptiveHuffmanNode {
         this.nodeId = nodeId;
 
         //character set to -1 since the leaf node should have no character representation.
-        this.character = -1;
+        this.value = null;
         this.leftChild = leftChild;
         this.rightChild = rightChild;
         this.freq = leftChild.getFreq() + rightChild.getFreq();
@@ -54,11 +54,11 @@ public class AdaptiveHuffmanNode {
     /**
      * Constructor for leaf node.
      * @param nodeId ID number of this node.
-     * @param character The character that this node represents.
+     * @param value The character that this node represents.
      */
-    public AdaptiveHuffmanNode(int nodeId, int character){
+    public AdaptiveHuffmanNode(int nodeId, String value){
         this.nodeId = nodeId;
-        this.character = character;
+        this.value = value;
         this.freq = 1;
         this.leftChild = null;
         this.rightChild = null;
@@ -97,18 +97,18 @@ public class AdaptiveHuffmanNode {
 
     /**
      * Gets the character which the node represents.
-     * @return The character which the node represents.
+     * @return The value which the node represents.
      */
-    public int getCharacter() {
-        return character;
+    public String getValue() {
+        return value;
     }
 
     /**
      * Sets the character which the node represents.
-     * @param character The character which the node represents.
+     * @param character The value which the node represents.
      */
-    public void setCharacter(int character) {
-        this.character = character;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**

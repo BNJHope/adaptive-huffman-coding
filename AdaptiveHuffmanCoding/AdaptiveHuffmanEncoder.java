@@ -22,7 +22,7 @@ public class AdaptiveHuffmanEncoder {
         //the current characters waiting to be read to the file and the string to add to the file
         String currString = "", stringToAdd = "";
 
-        //The character that was read from the input stream.
+        //The value that was read from the input stream.
         int nextCharInFile;
 
         //The character representation of what was read from the file.
@@ -106,23 +106,23 @@ public class AdaptiveHuffmanEncoder {
     }
 
     /**
-     * Updates the encoder's tree with the character handed to the function and gets its Huffman encoding.
-     * @param charToBeAdded The character to be added to the tree.
+     * Updates the encoder's tree with the value handed to the function and gets its Huffman encoding.
+     * @param valueToBeAdded The value to be added to the tree.
      */
-    private String getHuffmanCode(char charToBeAdded) {
+    private String getHuffmanCode(String valueToBeAdded) {
 
-        //tries to add the character to the tree or increment its frequency if it already exists.
+        //tries to add the value to the tree or increment its frequency if it already exists.
         //if there is a problem in matching a parent to a child in one of the swaps, then the
         //ParentDoesNotMatchChildException is thrown and the program exited.
         try {
-            this.tree.addCharToTree(charToBeAdded);
+            this.tree.addCharToTree(valueToBeAdded);
         } catch (ParentDoesNotMatchChildException e) {
-            System.err.println("Parent does not match child exception found at character : " + charToBeAdded);
+            System.err.println("Parent does not match child exception found at value : " + valueToBeAdded);
             System.exit(0);
         }
 
-        //returns the Huffman encoding of the character from the tree
-        return this.tree.getHuffmanCode(charToBeAdded);
+        //returns the Huffman encoding of the value from the tree
+        return this.tree.getHuffmanCode(valueToBeAdded);
     }
 
     private char convertBinaryStringToChar(String strToConvert){
