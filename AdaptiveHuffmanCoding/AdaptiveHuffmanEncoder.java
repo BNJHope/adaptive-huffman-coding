@@ -17,7 +17,18 @@ public class AdaptiveHuffmanEncoder {
     /**
      * The tree to be used whilst encoding the Huffman node
      */
-    AdaptiveHuffmanTree tree = new AdaptiveHuffmanTree();
+    AdaptiveHuffmanTree tree;
+
+    public AdaptiveHuffmanEncoder(int numberOfBitsToUse) {
+        if(numberOfBitsToUse !=8 && numberOfBitsToUse != 4 && numberOfBitsToUse != 2){
+            System.out.println("Number of bits to use value is not either 2, 4 or 8. Set to 8 by default.");
+            this.numberOfBitsToUse = 8;
+        } else {
+            this.numberOfBitsToUse = numberOfBitsToUse;
+        }
+
+        this.tree = new AdaptiveHuffmanTree();
+    }
 
     /**
      * Compresses the given file using Adaptive Huffman Encoding.
@@ -38,8 +49,10 @@ public class AdaptiveHuffmanEncoder {
         BufferedReader fileReader = null;
 
         //The value that is read from the reader when it has reached the end of file.
-        int EOFConst = -1;
+        final int EOFConst = -1;
 
+        //the array of the character split into individual bit segments
+        String[] bitSegments;
 
         //Try to initialise the file reader with the given file name.
         //If there are any problems then exit the program.
@@ -60,17 +73,24 @@ public class AdaptiveHuffmanEncoder {
                 //get the next character in the file
                 charToBeAdded = (char) nextCharInFile;
 
-                //get the combination of bits from the encoding of this character from the Huffman tree
-                //and add it to the collection of bits that need to be compressed and added to the output file.
-                currString += getHuffmanCode(charToBeAdded);
+                //the character split into its bit segments specified by the value
+                //given in the class
+                bitSegments = this.getBits(charToBeAdded);
 
-                //if the collection of bits from the encoding is longer than or equal to 7
-                //then remove the first 7, compress them into and add them to the file
-                if(currString.length() >= 7) {
-                    stringToAdd = currString.substring(0, 7);
-                    currString = currString.substring(7);
-                    outputHuffmanCode(stringToAdd, fout);
+                for(String s : bitSegments) {
+                    //get the combination of bits from the encoding of this character from the Huffman tree
+                    //and add it to the collection of bits that need to be compressed and added to the output file.
+                    currString += getHuffmanCode(s);
+
+                    //if the collection of bits from the encoding is longer than or equal to 7
+                    //then remove the first 7, compress them into and add them to the file
+                    if(currString.length() >= 7) {
+                        stringToAdd = currString.substring(0, 7);
+                        currString = currString.substring(7);
+                        outputHuffmanCode(stringToAdd, fout);
+                    }
                 }
+
             }
         } catch (IOException e) {
             System.out.println("Error reading file : exiting.");
@@ -208,8 +228,9 @@ public class AdaptiveHuffmanEncoder {
 
         //for every slot in the array
         for(int i = 0; i < result.length; i++){
-            //beginning index
+            //beginning index of this bit string
             int beginIndex = i * this.numberOfBitsToUse;
+            //end index of this bit string
             int endIndex = beginIndex + this.numberOfBitsToUse;
             result[i] = bitString.substring(beginIndex, endIndex);
         }
