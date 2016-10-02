@@ -9,6 +9,12 @@ import java.nio.charset.Charset;
 public class AdaptiveHuffmanEncoder {
 
     /**
+     * The number of bits from a character to use when handing values to the tree to encode.
+     * Must be either 2, 4 or 8.
+     */
+    private int numberOfBitsToUse;
+
+    /**
      * The tree to be used whilst encoding the Huffman node
      */
     AdaptiveHuffmanTree tree = new AdaptiveHuffmanTree();
@@ -180,4 +186,35 @@ public class AdaptiveHuffmanEncoder {
         }
 
     }
+
+    /**
+     * Converts a character into an array of strings of the character's bit representation
+     * Split at intervals determined by the class
+     * @param charToChange The character to convert into the bit string array
+     * @return An array of bit combinations depending on the character and the number of bits to use when encoding
+     */
+    private String[] getBits(char charToChange){
+        //resulting array - number of characters added depends on how many bits the length of each string
+        //will be.
+        String[] result = new String[8 / this.numberOfBitsToUse];
+
+        String bitString = Integer.toBinaryString((int) charToChange);
+
+        //makes sure that bit string is 8 characters long, as the toBinaryString method
+        //removes any preceding 0s from the string if there are any
+        while(bitString.length() < 8){
+            bitString = "0" + bitString;
+        }
+
+        //for every slot in the array
+        for(int i = 0; i < result.length; i++){
+            //beginning index
+            int beginIndex = i * this.numberOfBitsToUse;
+            int endIndex = beginIndex + this.numberOfBitsToUse;
+            result[i] = bitString.substring(beginIndex, endIndex);
+        }
+
+        return result;
+    }
+
 }
