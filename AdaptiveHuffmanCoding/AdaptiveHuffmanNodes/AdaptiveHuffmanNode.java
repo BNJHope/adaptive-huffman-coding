@@ -68,7 +68,7 @@ public class AdaptiveHuffmanNode {
      * @return The number of appearances the character that the node represents has made in the source.
      */
     public int getFreq() {
-        return freq;
+        return this.freq;
     }
 
     /**
