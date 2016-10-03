@@ -159,14 +159,17 @@ public class AdaptiveHuffmanEncoder {
         return (char) integerRepresentation;
     }
 
-    private FileOutputStream setupOutputFile(String filename){
+    private FileOutputStream setupOutputFile(String absolouteFileName){
+
+        //retrieve the raw file name by removing everything before the absoloute filname
+        String filename = absolouteFileName.substring(absolouteFileName.lastIndexOf('/'));
         //The original file name split into the parts before and after the first "." so that the "compressed" file name part
         //can be inserted
         String[] compressedFileNameComps = filename.split(".", 2);
 
         //The compressed file name, made up of the file name components from the original file name and the compressed
         //file path keyword added
-        String compressedFileName = compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
+        String compressedFileName = absolouteFileName.substring(0, absolouteFileName.lastIndexOf('/')) + compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
 
         //create new file
         File outputFile = new File(compressedFileName);
