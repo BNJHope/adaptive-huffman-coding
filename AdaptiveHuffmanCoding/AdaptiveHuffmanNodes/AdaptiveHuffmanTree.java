@@ -124,6 +124,8 @@ public class AdaptiveHuffmanTree {
         if(nodeToEdit == null) {
             isNewCharacter = true;
             nodeToEdit = this.createNewNode(valueToAdd);
+            if(!this.isRoot(nodeToEdit.getParentNode()))
+                addNodeToList(nodeToEdit.getParentNode(), 1);
             addNodeToList(nodeToEdit, 1);
         } else {
             updateNode(nodeToEdit);
@@ -217,7 +219,9 @@ public class AdaptiveHuffmanTree {
             if(this.NYTNode.getParentNode().getLeftChild() == this.NYTNode) {
                 //sets the old parent node's left child as the new parent node
                 this.NYTNode.getParentNode().setLeftChild(newParentNode);
+                newParentNode.setParentNode(this.NYTNode.getParentNode());
             } else if (this.NYTNode.getParentNode().getRightChild() == this.NYTNode) {
+                newParentNode.setParentNode(this.NYTNode.getParentNode());
                 this.NYTNode.getParentNode().setRightChild(newParentNode);
             } else {
                 throw new ParentDoesNotMatchChildException();
@@ -263,6 +267,7 @@ public class AdaptiveHuffmanTree {
 
         //add the node to its new list
         this.addNodeToList(node, node.getFreq() + 1);
+
     }
 
     /**
@@ -297,6 +302,7 @@ public class AdaptiveHuffmanTree {
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
 
+        String breakpoint = "";
         //gets the last element of the weight group
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
