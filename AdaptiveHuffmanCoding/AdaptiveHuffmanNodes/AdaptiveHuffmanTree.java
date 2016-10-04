@@ -63,7 +63,18 @@ public class AdaptiveHuffmanTree {
         boolean rootNodeFound = false;
 
         //the current node being looked at
-        AdaptiveHuffmanNode currentNode = this.nodeArray.get(valueToGet), parentNode = currentNode.getParentNode();
+        AdaptiveHuffmanNode currentNode, parentNode;
+
+        //if the empty string is passed then get the Huffman Code for the NYT node
+        //otherwise, get the Huffman code for the string passed to the function
+        if(valueToGet == "") {
+            currentNode = this.NYTNode;
+        } else {
+            currentNode = this.nodeArray.get(valueToGet);
+        }
+
+        //assign the parent node variable initially as the parent node of the current node
+        parentNode  = currentNode.getParentNode();
 
         //while the root node has not been found
         while(!rootNodeFound) {
@@ -94,7 +105,10 @@ public class AdaptiveHuffmanTree {
      * new value node is added as its sibling.
      * @param valueToAdd The value to add to the tree.
      */
-    public void addCharToTree(String valueToAdd) throws ParentDoesNotMatchChildException {
+    public boolean addCharToTree(String valueToAdd) throws ParentDoesNotMatchChildException {
+
+        //determines whether the value read by the function is new or not
+        boolean isNewCharacter = false;
 
         //tries to find if the value is already in the tree by checking all of the child nodes.
         AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(valueToAdd);
@@ -108,6 +122,7 @@ public class AdaptiveHuffmanTree {
         //if it is a new value for the tree then add it to NYT.
         //otherwise, check to see if the node needs to be replaced anywhere before incrementing frequency.
         if(nodeToEdit == null) {
+            isNewCharacter = true;
             nodeToEdit = this.createNewNode(valueToAdd);
             addNodeToList(nodeToEdit, 1);
         } else {
@@ -131,7 +146,7 @@ public class AdaptiveHuffmanTree {
                 rootNodeFound = true;
         }
 
-
+        return isNewCharacter;
     }
 
     /**
