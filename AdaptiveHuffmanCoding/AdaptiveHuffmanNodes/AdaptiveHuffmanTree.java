@@ -207,11 +207,15 @@ public class AdaptiveHuffmanTree {
             } else {
                 throw new ParentDoesNotMatchChildException();
             }
+        } else {
+            this.root = newParentNode;
         }
-
-
+        
         //sets the NYT's new parent as the new parent node.
         this.NYTNode.setParentNode(newParentNode);
+
+        //add the new node to the node hashmap
+        this.nodeArray.put(valueToAdd, newNode);
 
         //returns a reference to the new node which was created.
         return newNode;
@@ -277,10 +281,8 @@ public class AdaptiveHuffmanTree {
      * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
+
         //gets the last element of the weight group
-        boolean containsIntKey = this.nodeWeightGroups.containsKey(nodeToCheck.getFreq());
-        String breakPoint = "";
-        LinkedList<AdaptiveHuffmanNode> weightList = this.nodeWeightGroups.get(nodeToCheck.getFreq());
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
         //returns whether the reference to the highest weight in the group matches the reference to the node handed
