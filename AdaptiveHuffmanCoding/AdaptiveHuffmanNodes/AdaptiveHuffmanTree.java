@@ -159,7 +159,14 @@ public class AdaptiveHuffmanTree {
 
         //if the node is the highest in the group then
         //edit the lists position in the list group
-        if(!this.isHighestInWeightGroup(node) && !this.isHighestInWeightGroup(node.getParentNode())) {
+        if(this.isRoot(node.getParentNode())){
+            if(!this.isHighestInWeightGroup(node))
+                this.editListPosition(node, 0);
+            else {
+                this.nodeWeightGroups.get(node.getFreq()).remove(node);
+                this.addNodeToList(node, node.getFreq() + 1);
+            }
+        } else if(!this.isHighestInWeightGroup(node) && !this.isHighestInWeightGroup(node.getParentNode())) {
             this.editListPosition(node, 0);
         } else if (this.isHighestInWeightGroup(node.getParentNode()) && !this.isSecondHighestInWeightGroup(node)){
             this.editListPosition(node, 1);
@@ -301,8 +308,6 @@ public class AdaptiveHuffmanTree {
      * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
-
-        String breakpoint = "";
         //gets the last element of the weight group
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
@@ -363,12 +368,15 @@ public class AdaptiveHuffmanTree {
      * then this exception is thrown.
      */
     private void swapParents(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
+        System.out.println("");
         //the parent node of the first node
         AdaptiveHuffmanNode firstParentNode = firstNode.getParentNode();
 
         //the parent node of the second node
         AdaptiveHuffmanNode secondParentNode = secondNode.getParentNode();
 
+        firstNode.setParentNode(secondParentNode);
+        secondNode.setParentNode(firstParentNode);
         //if the first node's parent node has the right child as the first node then make sure the new right child is
         //the second node
         if(firstParentNode.getRightChild() == firstNode)
@@ -381,8 +389,8 @@ public class AdaptiveHuffmanTree {
 
             //if neither of its children are equal to the first node then throw an exception since one of the children of
             //the parent node should have been the first child
-        else
-            throw new ParentDoesNotMatchChildException();
+        else{
+            throw new ParentDoesNotMatchChildException();}
 
         //if the second node's parent node has the right child as the second node then make sure the new right child is
         //the first node
@@ -396,7 +404,8 @@ public class AdaptiveHuffmanTree {
 
             //if neither of its children are equal to the first node then throw an exception since one of the children of
             //the parent node should have been the first child
-        else
-            throw new ParentDoesNotMatchChildException();
+        else{
+            System.out.println("");
+            throw new ParentDoesNotMatchChildException();}
     }
 }

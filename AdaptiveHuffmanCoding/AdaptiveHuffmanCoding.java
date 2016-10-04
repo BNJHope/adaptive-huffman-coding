@@ -6,6 +6,7 @@ public class AdaptiveHuffmanCoding {
         String readFilename = args[0];
         AdaptiveHuffmanEncoder encoder = new AdaptiveHuffmanEncoder(Integer.parseInt(args[1]));
         encoder.encode(readFilename);
+        System.out.println("Process complete");
     }
 
 }
