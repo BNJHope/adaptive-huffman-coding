@@ -54,6 +54,8 @@ public class AdaptiveHuffmanEncoder {
         //the array of the character split into individual bit segments
         String[] bitSegments;
 
+        TreePrinter printer = new TreePrinter();
+
         //Try to initialise the file reader with the given file name.
         //If there are any problems then exit the program.
         try {
@@ -91,6 +93,9 @@ public class AdaptiveHuffmanEncoder {
                     }
                 }
 
+                printer.printTree(this.tree.getRoot());
+                for(int i = 0; i < 6; i++)
+                    System.out.println();
             }
         } catch (IOException e) {
             System.out.println("Error reading file : exiting.");

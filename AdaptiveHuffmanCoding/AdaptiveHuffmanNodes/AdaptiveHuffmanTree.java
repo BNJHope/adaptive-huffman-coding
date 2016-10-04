@@ -144,6 +144,10 @@ public class AdaptiveHuffmanTree {
             else
                 updateNode(nodeHolder);
             nodeHolder.incrementFrequency();
+
+            //update the node's frequency in case the child nodes are updated
+            nodeHolder.setFreq(nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
+
             if(this.isRoot(nodeHolder))
                 rootNodeFound = true;
         }
@@ -268,6 +272,8 @@ public class AdaptiveHuffmanTree {
         //swap the two nodes in the tree position
         this.swapNodesInTree(node, highestNode);
 
+        String bp = "";
+
         //set the replace position to the highest node, which
         //replaces the node to be removed
         firstList.set(position, highestNode);
@@ -368,7 +374,6 @@ public class AdaptiveHuffmanTree {
      * then this exception is thrown.
      */
     private void swapParents(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
-        System.out.println("");
         //the parent node of the first node
         AdaptiveHuffmanNode firstParentNode = firstNode.getParentNode();
 
@@ -389,8 +394,8 @@ public class AdaptiveHuffmanTree {
 
             //if neither of its children are equal to the first node then throw an exception since one of the children of
             //the parent node should have been the first child
-        else{
-            throw new ParentDoesNotMatchChildException();}
+        else
+            throw new ParentDoesNotMatchChildException();
 
         //if the second node's parent node has the right child as the second node then make sure the new right child is
         //the first node
@@ -404,8 +409,14 @@ public class AdaptiveHuffmanTree {
 
             //if neither of its children are equal to the first node then throw an exception since one of the children of
             //the parent node should have been the first child
-        else{
-            System.out.println("");
-            throw new ParentDoesNotMatchChildException();}
+        else
+            throw new ParentDoesNotMatchChildException();
+
+        firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+        secondParentNode.setFreq(secondParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+    }
+
+    public AdaptiveHuffmanNode getRoot(){
+        return this.root;
     }
 }
