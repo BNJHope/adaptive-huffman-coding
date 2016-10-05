@@ -81,11 +81,11 @@ public class AdaptiveHuffmanEncoder {
                     //and add it to the collection of bits that need to be compressed and added to the output file.
                     currString += getHuffmanCode(s);
 
-                    //if the collection of bits from the encoding is longer than or equal to 7
-                    //then remove the first 7, compress them into and add them to the file
-                    if(currString.length() >= 7) {
-                        stringToAdd = currString.substring(0, 7);
-                        currString = currString.substring(7);
+                    //if the collection of bits from the encoding is longer than or equal to 8
+                    //then remove the first 8, compress them into and add them to the file
+                    if(currString.length() >= 8) {
+                        stringToAdd = currString.substring(0, 8);
+                        currString = currString.substring(8);
                         outputHuffmanCode(stringToAdd, fout);
                     }
                 }
