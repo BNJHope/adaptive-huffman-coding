@@ -128,7 +128,7 @@ public class AdaptiveHuffmanTree {
                 addNodeToList(nodeToEdit.getParentNode(), 1);
             addNodeToList(nodeToEdit, 1);
         } else {
-            updateNode(nodeToEdit);
+            updateNode(nodeToEdit, nodeToEdit.getFreq() + 1);
             nodeToEdit.incrementFrequency();
         }
 
@@ -142,8 +142,7 @@ public class AdaptiveHuffmanTree {
             if(this.isRoot(nodeHolder))
                 rootNodeFound = true;
             else
-                updateNode(nodeHolder);
-            nodeHolder.incrementFrequency();
+                updateNode(nodeHolder, nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
 
             //update the node's frequency in case the child nodes are updated
             nodeHolder.setFreq(nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
@@ -159,25 +158,25 @@ public class AdaptiveHuffmanTree {
      * Updates the node and its position in the tree when another occurence of it happens.
      * @param node
      */
-    private void updateNode(AdaptiveHuffmanNode node) throws ParentDoesNotMatchChildException {
+    private void updateNode(AdaptiveHuffmanNode node, int newFreq) throws ParentDoesNotMatchChildException {
 
         //if the node is the highest in the group then
         //edit the lists position in the list group
         if(this.isRoot(node.getParentNode())){
             if(!this.isHighestInWeightGroup(node))
-                this.editListPosition(node, 0);
+                this.editListPosition(node, 0, newFreq);
             else {
                 this.nodeWeightGroups.get(node.getFreq()).remove(node);
                 this.addNodeToList(node, node.getFreq() + 1);
             }
         } else if(!this.isHighestInWeightGroup(node) && !this.isHighestInWeightGroup(node.getParentNode())) {
-            this.editListPosition(node, 0);
+            this.editListPosition(node, 0, newFreq);
         } else if (this.isHighestInWeightGroup(node.getParentNode()) && !this.isSecondHighestInWeightGroup(node)){
-            this.editListPosition(node, 1);
+            this.editListPosition(node, 1, newFreq);
         } else {
             //removes the node from its previous list and adds it to its new list
             this.nodeWeightGroups.get(node.getFreq()).remove(node);
-            this.addNodeToList(node, node.getFreq() + 1);
+            this.addNodeToList(node, newFreq);
         }
     }
 
@@ -257,7 +256,7 @@ public class AdaptiveHuffmanTree {
      * @param node The node to change list position for.
      * @param indexFromEnd How far in from the end the node is that needs to be removed
      */
-    public void editListPosition(AdaptiveHuffmanNode node, int indexFromEnd) throws ParentDoesNotMatchChildException {
+    public void editListPosition(AdaptiveHuffmanNode node, int indexFromEnd, int newFreq) throws ParentDoesNotMatchChildException {
 
         //get the linkedlist which holds the node passed to the function.
         LinkedList<AdaptiveHuffmanNode> firstList = this.nodeWeightGroups.get(node.getFreq());
@@ -272,14 +271,12 @@ public class AdaptiveHuffmanTree {
         //swap the two nodes in the tree position
         this.swapNodesInTree(node, highestNode);
 
-        String bp = "";
-
         //set the replace position to the highest node, which
         //replaces the node to be removed
         firstList.set(position, highestNode);
 
         //add the node to its new list
-        this.addNodeToList(node, node.getFreq() + 1);
+        this.addNodeToList(node, newFreq);
 
     }
 
@@ -314,6 +311,9 @@ public class AdaptiveHuffmanTree {
      * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
+
+        LinkedList<AdaptiveHuffmanNode> i = this.nodeWeightGroups.get(nodeToCheck.getFreq());
+        String bp = "";
         //gets the last element of the weight group
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
@@ -412,8 +412,8 @@ public class AdaptiveHuffmanTree {
         else
             throw new ParentDoesNotMatchChildException();
 
-        firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
-        secondParentNode.setFreq(secondParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+//        firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+//        secondParentNode.setFreq(secondParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
     }
 
     public AdaptiveHuffmanNode getRoot(){
