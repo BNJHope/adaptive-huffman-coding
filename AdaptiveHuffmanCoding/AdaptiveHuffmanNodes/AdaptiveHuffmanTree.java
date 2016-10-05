@@ -412,8 +412,8 @@ public class AdaptiveHuffmanTree {
         else
             throw new ParentDoesNotMatchChildException();
 
-//        firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
-//        secondParentNode.setFreq(secondParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+        firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+        secondParentNode.setFreq(secondParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
     }
 
     public AdaptiveHuffmanNode getRoot(){
