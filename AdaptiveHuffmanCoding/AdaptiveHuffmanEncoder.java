@@ -72,12 +72,9 @@ public class AdaptiveHuffmanEncoder {
         //If there are any problems then exit the program.
         try {
             while((nextCharInFile = fileReader.read()) != EOFConst) {
-                //get the next character in the file
-                charToBeAdded = (char) nextCharInFile;
-
                 //the character split into its bit segments specified by the value
                 //given in the class
-                bitSegments = this.getBits(charToBeAdded);
+                bitSegments = this.getBits(nextCharInFile);
 
                 for(String s : bitSegments) {
                     //get the combination of bits from the encoding of this character from the Huffman tree
@@ -226,7 +223,7 @@ public class AdaptiveHuffmanEncoder {
      * @param charToChange The character to convert into the bit string array
      * @return An array of bit combinations depending on the character and the number of bits to use when encoding
      */
-    private String[] getBits(char charToChange){
+    private String[] getBits(int charToChange){
         //resulting array - number of characters added depends on how many bits the length of each string
         //will be.
         String[] result = new String[8 / this.numberOfBitsToUse];

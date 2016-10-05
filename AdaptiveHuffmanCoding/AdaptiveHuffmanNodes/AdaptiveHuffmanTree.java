@@ -83,6 +83,7 @@ public class AdaptiveHuffmanTree {
             //otherwise, add a 0 to the begininng of the string
             result = parentNode.getRightChild() == currentNode ? "1" + result: "0" + result;
 
+            String bp = "";
             //if the parent node is the root node of the tree then the tree does not need to be navigated
             //anymore and so the loop can be exited
             if(this.isRoot(parentNode)){
@@ -128,7 +129,7 @@ public class AdaptiveHuffmanTree {
                 addNodeToList(nodeToEdit.getParentNode(), 1);
             addNodeToList(nodeToEdit, 1);
         } else {
-            updateNode(nodeToEdit, nodeToEdit.getFreq() + 1);
+            this.updateNode(nodeToEdit, nodeToEdit.getFreq() + 1);
             nodeToEdit.incrementFrequency();
         }
 
@@ -142,7 +143,7 @@ public class AdaptiveHuffmanTree {
             if(this.isRoot(nodeHolder))
                 rootNodeFound = true;
             else
-                updateNode(nodeHolder, nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
+                this.updateNode(nodeHolder, nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
 
             //update the node's frequency in case the child nodes are updated
             nodeHolder.setFreq(nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
@@ -155,7 +156,8 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
-     * Updates the node and its position in the tree when another occurence of it happens.
+     * Updates the node and its position in the tree when another occurence of it happens. Returns true if a tree swap was made, in which case the
+     * rest of the tree was already updated.
      * @param node
      */
     private void updateNode(AdaptiveHuffmanNode node, int newFreq) throws ParentDoesNotMatchChildException {
@@ -178,6 +180,7 @@ public class AdaptiveHuffmanTree {
             this.nodeWeightGroups.get(node.getFreq()).remove(node);
             this.addNodeToList(node, newFreq);
         }
+
     }
 
     /**
@@ -268,16 +271,15 @@ public class AdaptiveHuffmanTree {
         //now removed from the end of the list
         AdaptiveHuffmanNode highestNode = firstList.get(firstList.size() - indexFromEnd - 1);
 
-        //swap the two nodes in the tree position
-        this.swapNodesInTree(node, highestNode);
-
-        String bp = "";
         //set the replace position to the highest node, which
         //replaces the node to be removed
         firstList.set(position, highestNode);
 
         //add the node to its new list
         this.addNodeToList(node, newFreq);
+
+        //swap the two nodes in the tree position
+        this.swapNodesInTree(node, highestNode);
 
     }
 
@@ -378,6 +380,12 @@ public class AdaptiveHuffmanTree {
         //the parent node of the second node
         AdaptiveHuffmanNode secondParentNode = secondNode.getParentNode();
 
+        //the node being incremented while updating the old parents tree side
+       AdaptiveHuffmanNode currentNode;
+
+        //determines whether the root node has been found yet while updating the nodes
+        boolean rootNodeFound = false;
+
         firstNode.setParentNode(secondParentNode);
         secondNode.setParentNode(firstParentNode);
         //if the first node's parent node has the right child as the first node then make sure the new right child is
@@ -410,11 +418,20 @@ public class AdaptiveHuffmanTree {
         else
             throw new ParentDoesNotMatchChildException();
 
-        if(!this.isRoot(firstParentNode)) {
-            this.nodeWeightGroups.get(firstParentNode.getFreq()).remove(firstParentNode);
-            this.addNodeToList(firstParentNode, firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
-        }
-        firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+        //since the rest of the second parent branch will be updated by the new second child being updated, we only need to update the first parent node section
+        currentNode = firstParentNode;
+
+//        while(currentNode != null) {
+//            if(!this.isRoot(currentNode)) {
+//                this.nodeWeightGroups.get(currentNode.getFreq()).remove(currentNode);
+//                this.addNodeToList(currentNode, currentNode.getLeftChild().getFreq() + currentNode.getRightChild().getFreq());
+//            } else {
+//                rootNodeFound = true;
+//            }
+//            currentNode.setFreq(currentNode.getLeftChild().getFreq() + currentNode.getRightChild().getFreq());
+//            currentNode = currentNode.getParentNode();
+//        }
+
     }
 
     public AdaptiveHuffmanNode getRoot(){
