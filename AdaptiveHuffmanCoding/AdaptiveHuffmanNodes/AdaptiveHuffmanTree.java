@@ -437,4 +437,16 @@ public class AdaptiveHuffmanTree {
     public AdaptiveHuffmanNode getRoot(){
         return this.root;
     }
+
+    public AdaptiveHuffmanNode getNextNode(AdaptiveHuffmanNode prev, int index) {
+        return index == 0 ? prev.getLeftChild() : prev.getRightChild();
+    }
+
+    public boolean isNYT(AdaptiveHuffmanNode node) {
+        return node == this.NYTNode;
+    }
+
+    public boolean isLeaf(AdaptiveHuffmanNode node) {
+        return node.getLeftChild() == null;
+    }
 }
