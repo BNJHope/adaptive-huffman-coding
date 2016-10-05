@@ -12,6 +12,6 @@ public class AdaptiveHuffmanDecoder {
     FileInputStream inputStream;
 
     public String getNextBitsFromFile() throws IOException {
-        return Integer.toBinaryString(this.inputStream.read(););
+        return Integer.toBinaryString(this.inputStream.read());
     }
 }

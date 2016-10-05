@@ -271,6 +271,7 @@ public class AdaptiveHuffmanTree {
         //swap the two nodes in the tree position
         this.swapNodesInTree(node, highestNode);
 
+        String bp = "";
         //set the replace position to the highest node, which
         //replaces the node to be removed
         firstList.set(position, highestNode);
@@ -409,8 +410,11 @@ public class AdaptiveHuffmanTree {
         else
             throw new ParentDoesNotMatchChildException();
 
+        if(!this.isRoot(firstParentNode)) {
+            this.nodeWeightGroups.get(firstParentNode.getFreq()).remove(firstParentNode);
+            this.addNodeToList(firstParentNode, firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
+        }
         firstParentNode.setFreq(firstParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
-        secondParentNode.setFreq(secondParentNode.getLeftChild().getFreq() + firstParentNode.getRightChild().getFreq());
     }
 
     public AdaptiveHuffmanNode getRoot(){
