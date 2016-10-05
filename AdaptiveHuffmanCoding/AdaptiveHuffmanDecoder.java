@@ -49,6 +49,7 @@ public class AdaptiveHuffmanDecoder {
                         } else if(tree.isLeaf(currNode)) {
                             this.outputChar(currNode.getValue());
                             this.tree.addCharToTree(currNode.getValue());
+                            currNode = this.tree.getRoot();
                         }
 
                     } else {
@@ -57,6 +58,7 @@ public class AdaptiveHuffmanDecoder {
                             this.outputChar(NYTString);
                             this.tree.addCharToTree(NYTString);
                             NYTString = "";
+                            currNode = this.tree.getRoot();
                         }
 
                     }
@@ -148,4 +150,3 @@ public class AdaptiveHuffmanDecoder {
     }
 
 }
-
