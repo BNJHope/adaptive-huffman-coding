@@ -311,9 +311,6 @@ public class AdaptiveHuffmanTree {
      * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
-
-        LinkedList<AdaptiveHuffmanNode> i = this.nodeWeightGroups.get(nodeToCheck.getFreq());
-        String bp = "";
         //gets the last element of the weight group
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
