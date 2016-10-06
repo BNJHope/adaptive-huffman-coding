@@ -155,53 +155,11 @@ public class AdaptiveHuffmanTree {
                 //update the node's frequency in case the child nodes are updated
             nodeHolder.incrementFrequency();
 
-
             if(this.isRoot(nodeHolder))
                 rootNodeFound = true;
         }
 
-        String bp = "";
     }
-
-    /**
-     * Updates the node and its position in the tree when another occurence of it happens. Returns true if a tree swap was made, in which case the
-     * rest of the tree was already updated.
-     * @param node
-     */
-    private void updateNode(AdaptiveHuffmanNode node, int newFreq) throws ParentDoesNotMatchChildException {
-
-        //if the node is the highest in the group then
-        //edit the lists position in the list group
-        if(this.isRoot(node.getParentNode())){
-            if(!this.isHighestInWeightGroup(node))
-                this.editListPosition(node, 0, newFreq);
-            else {
-                this.nodeWeightGroups.get(node.getFreq()).removeLast();
-                this.addNodeToList(node, node.getFreq() + 1);
-            }
-        } else if(!this.isHighestInWeightGroup(node) && !this.isHighestInWeightGroup(node.getParentNode())) {
-            this.editListPosition(node, 0, newFreq);
-        } else if (this.isHighestInWeightGroup(node.getParentNode()) && !this.isSecondHighestInWeightGroup(node)){
-            this.editListPosition(node, 1, newFreq);
-        } else {
-            //removes the node from its previous list and adds it to its new list
-            this.nodeWeightGroups.get(node.getFreq()).removeLast();
-            this.addNodeToList(node, newFreq);
-        }
-
-    }
-
-    /**
-     * Gets the node from the tree that is associated with the value passed to the function.
-     * @param valueToFind The value to find in the tree.
-     * @return If the value has already been seen, then this function returns the node that represents that value in the tree.
-     * Otherwise, it returns null.
-     */
-    private AdaptiveHuffmanNode getNodeFromTree(String valueToFind){
-        //returns the contents of the hashmap at the address.
-        return this.nodeArray.get(valueToFind);
-    }
-
 
     /**
      * Spawns a new node using the NYT node of the tree and gives back a reference to this new node.
@@ -240,7 +198,7 @@ public class AdaptiveHuffmanTree {
         } else {
             this.root = newParentNode;
         }
-        
+
         //sets the NYT's new parent as the new parent node.
         this.NYTNode.setParentNode(newParentNode);
 
@@ -249,6 +207,40 @@ public class AdaptiveHuffmanTree {
 
         //returns a reference to the new node which was created.
         return newNode;
+    }
+
+    /**
+     * Updates the node and its position in the tree when another occurence of it happens. Returns true if a tree swap was made, in which case the
+     * rest of the tree was already updated.
+     * @param node
+     */
+    private void updateNode(AdaptiveHuffmanNode node, int newFreq) throws ParentDoesNotMatchChildException {
+
+        LinkedList<AdaptiveHuffmanNode> listToEdit;
+
+        //if the node is the highest in the group then
+        //edit the lists position in the list group
+        if(this.isRoot(node.getParentNode())){
+            if(!this.isHighestInWeightGroup(node))
+                this.editListPosition(node, 0, newFreq);
+            else {
+                this.nodeWeightGroups.get(node.getFreq()).removeLast();
+                this.addNodeToList(node, node.getFreq() + 1);
+            }
+        } else if(!this.isHighestInWeightGroup(node) && !this.parentIsHighestWeightInGroup(node)) {
+            this.editListPosition(node, 0, newFreq);
+        } else if (this.parentIsHighestWeightInGroup(node) && !this.isSecondHighestInWeightGroup(node)) {
+            this.editListPosition(node, 1, newFreq);
+        } else if (this.parentIsHighestWeightInGroup(node) && this.isSecondHighestInWeightGroup(node)){
+            listToEdit = this.nodeWeightGroups.get(node.getFreq());
+            listToEdit.remove(listToEdit.size() - 2);
+            this.addNodeToList(node, newFreq);
+        } else {
+            //removes the node from its previous list and adds it to its new list
+            this.nodeWeightGroups.get(node.getFreq()).removeLast();
+            this.addNodeToList(node, newFreq);
+        }
+
     }
 
     /**
@@ -269,6 +261,7 @@ public class AdaptiveHuffmanTree {
         //now removed from the end of the list
         AdaptiveHuffmanNode highestNode = firstList.remove(firstList.size() - indexFromEnd - 1);
 
+        String bp = "";
         //set the replace position to the highest node, which
         //replaces the node to be removed
         firstList.set(position, highestNode);
@@ -291,6 +284,10 @@ public class AdaptiveHuffmanTree {
         //Gets the list to add the new node to by getting the new frequency list from the map.
         LinkedList<AdaptiveHuffmanNode> newList = this.nodeWeightGroups.get(newFrequency);
 
+        boolean placeFound = false;
+        int stepper = 0;
+        AdaptiveHuffmanNode currentStepperNode;
+
         //if there is no list in the map when given the frequency as a key then make a new list and add it to the map
         //at that frequency.
         if(newList == null) {
@@ -300,7 +297,25 @@ public class AdaptiveHuffmanTree {
         } else {
             //if the node is being added to the new list it will have the lowest ID since it was previously from a lower weight class
             //therefore it can be added to the start wihtout having to check if the IDs are in order.
-            newList.addFirst(node);
+            if(newList.size() == 0) {
+                newList.add(node);
+            } else {
+                while(!placeFound) {
+                    currentStepperNode = newList.get(stepper);
+                    if (currentStepperNode.getNodeId() > node.getNodeId()){
+                        newList.add(stepper, node);
+                        placeFound = true;
+                    }
+                    stepper++;
+                    if(newList.size() <= stepper) {
+                        newList.addLast(node);
+                        placeFound = true;
+                    }
+
+                }
+            }
+
+            //newList.addFirst(node);
         }
 
     }
@@ -330,6 +345,17 @@ public class AdaptiveHuffmanTree {
         AdaptiveHuffmanNode secondHighestNode = listToCheck.get(listToCheck.size() - 2);
 
         return(secondHighestNode == nodeToCheck);
+    }
+
+    /**
+     *
+     * @param nodeToCheck
+     * @return
+     */
+    private boolean parentIsHighestWeightInGroup(AdaptiveHuffmanNode nodeToCheck) {
+        AdaptiveHuffmanNode highestNode = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
+
+        return nodeToCheck.getParentNode() == highestNode;
     }
 
     /**
@@ -472,5 +498,17 @@ public class AdaptiveHuffmanTree {
      */
     public boolean rootIsNYT() {
         return this.isRoot(this.NYTNode);
+    }
+
+
+    /**
+     * Gets the node from the tree that is associated with the value passed to the function.
+     * @param valueToFind The value to find in the tree.
+     * @return If the value has already been seen, then this function returns the node that represents that value in the tree.
+     * Otherwise, it returns null.
+     */
+    private AdaptiveHuffmanNode getNodeFromTree(String valueToFind){
+        //returns the contents of the hashmap at the address.
+        return this.nodeArray.get(valueToFind);
     }
 }
