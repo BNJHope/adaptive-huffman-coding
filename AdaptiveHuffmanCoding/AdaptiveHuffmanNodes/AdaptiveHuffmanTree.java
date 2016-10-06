@@ -145,18 +145,22 @@ public class AdaptiveHuffmanTree {
         while(!rootNodeFound) {
             //update the parent node and its position
             nodeHolder = nodeHolder.getParentNode();
+
+            //root is not in any weight groups so all we need to do with the root node is update its frequency
             if(this.isRoot(nodeHolder))
                 rootNodeFound = true;
             else
-                this.updateNode(nodeHolder, nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
+                this.updateNode(nodeHolder, nodeHolder.getFreq() + 1);
 
-            //update the node's frequency in case the child nodes are updated
-            nodeHolder.setFreq(nodeHolder.getLeftChild().getFreq() + nodeHolder.getRightChild().getFreq());
+                //update the node's frequency in case the child nodes are updated
+            nodeHolder.incrementFrequency();
+
 
             if(this.isRoot(nodeHolder))
                 rootNodeFound = true;
         }
 
+        String bp = "";
     }
 
     /**
@@ -172,7 +176,7 @@ public class AdaptiveHuffmanTree {
             if(!this.isHighestInWeightGroup(node))
                 this.editListPosition(node, 0, newFreq);
             else {
-                this.nodeWeightGroups.get(node.getFreq()).remove(node);
+                this.nodeWeightGroups.get(node.getFreq()).removeLast();
                 this.addNodeToList(node, node.getFreq() + 1);
             }
         } else if(!this.isHighestInWeightGroup(node) && !this.isHighestInWeightGroup(node.getParentNode())) {
@@ -181,7 +185,7 @@ public class AdaptiveHuffmanTree {
             this.editListPosition(node, 1, newFreq);
         } else {
             //removes the node from its previous list and adds it to its new list
-            this.nodeWeightGroups.get(node.getFreq()).remove(node);
+            this.nodeWeightGroups.get(node.getFreq()).removeLast();
             this.addNodeToList(node, newFreq);
         }
 
@@ -198,16 +202,6 @@ public class AdaptiveHuffmanTree {
         return this.nodeArray.get(valueToFind);
     }
 
-    /**
-     * Checks whether the node given to the function is the root node of the tree or not.
-     * @param node The node to check.
-     * @return True if the node is the root node, false if it is not.
-     */
-    private boolean isRoot(AdaptiveHuffmanNode node) {
-
-        //returns whether the reference of the node handed to the function is the same as the reference to the root node.
-        return node == this.root;
-    }
 
     /**
      * Spawns a new node using the NYT node of the tree and gives back a reference to this new node.
@@ -273,7 +267,7 @@ public class AdaptiveHuffmanTree {
 
         //the node at the end of the linked list, ie the one with the highest ID
         //now removed from the end of the list
-        AdaptiveHuffmanNode highestNode = firstList.get(firstList.size() - indexFromEnd - 1);
+        AdaptiveHuffmanNode highestNode = firstList.remove(firstList.size() - indexFromEnd - 1);
 
         //set the replace position to the highest node, which
         //replaces the node to be removed
@@ -353,23 +347,6 @@ public class AdaptiveHuffmanTree {
     }
 
     /**
-     * Swaps the IDs of the two nodes given to the function.
-     * @param firstNode The first node to be swapped.
-     * @param secondNode The second node to be swapped.
-     */
-    private void swapIds(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode){
-        //swap space for the id numbers when they need to be swapped
-        int idSwapSpace = firstNode.getNodeId();
-
-        //set the first node's id to the second node.
-        firstNode.setNodeId(secondNode.getNodeId());
-
-        //set the second node's id to the first node's by using the id held in the swap space.
-        secondNode.setNodeId(idSwapSpace);
-
-    }
-
-    /**
      * Swaps the parents of the two nodes handed to the function.
      * @param firstNode The first node to be swapped.
      * @param secondNode The second node to be swapped.
@@ -382,12 +359,6 @@ public class AdaptiveHuffmanTree {
 
         //the parent node of the second node
         AdaptiveHuffmanNode secondParentNode = secondNode.getParentNode();
-
-        //the node being incremented while updating the old parents tree side
-       AdaptiveHuffmanNode currentNode;
-
-        //determines whether the root node has been found yet while updating the nodes
-        boolean rootNodeFound = false;
 
         firstNode.setParentNode(secondParentNode);
         secondNode.setParentNode(firstParentNode);
@@ -421,9 +392,32 @@ public class AdaptiveHuffmanTree {
         else
             throw new ParentDoesNotMatchChildException();
 
-        //since the rest of the second parent branch will be updated by the new second child being updated, we only need to update the first parent node section
-        currentNode = firstParentNode;
+    }
 
+    /**
+     * Swaps the IDs of the two nodes given to the function.
+     * @param firstNode The first node to be swapped.
+     * @param secondNode The second node to be swapped.
+     */
+    private void swapIds(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode){
+        //swap space for the id numbers when they need to be swapped
+        int idSwapSpace = firstNode.getNodeId();
+
+        //set the first node's id to the second node.
+        firstNode.setNodeId(secondNode.getNodeId());
+
+        //set the second node's id to the first node's by using the id held in the swap space.
+        secondNode.setNodeId(idSwapSpace);
+
+    }
+
+    /**
+     * Checks whether the node given to the function is the root node of the tree or not.
+     * @param node The node to check.
+     * @return True if the node is the root node, false if it is not.
+     */
+    private boolean isRoot(AdaptiveHuffmanNode node) {
+        return node == this.root;
     }
 
     /**
