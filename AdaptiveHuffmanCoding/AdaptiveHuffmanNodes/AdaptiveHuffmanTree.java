@@ -261,7 +261,6 @@ public class AdaptiveHuffmanTree {
         //now removed from the end of the list
         AdaptiveHuffmanNode highestNode = firstList.remove(firstList.size() - indexFromEnd - 1);
 
-        String bp = "";
         //set the replace position to the highest node, which
         //replaces the node to be removed
         firstList.set(position, highestNode);
@@ -315,7 +314,6 @@ public class AdaptiveHuffmanTree {
                 }
             }
 
-            //newList.addFirst(node);
         }
 
     }

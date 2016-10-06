@@ -8,6 +8,8 @@ import java.nio.charset.Charset;
 
 public class AdaptiveHuffmanEncoder {
 
+    TreePrinter tp = new TreePrinter();
+
     /**
      * The number of bits from a character to use when handing values to the tree to encode.
      * Must be either 2, 4 or 8.
@@ -42,9 +44,6 @@ public class AdaptiveHuffmanEncoder {
         //The value that was read from the input stream.
         int nextCharInFile;
 
-        //The character representation of what was read from the file.
-        char charToBeAdded;
-
         //The reader of the file given to this function.
         BufferedReader fileReader = null;
 
@@ -53,8 +52,6 @@ public class AdaptiveHuffmanEncoder {
 
         //the array of the character split into individual bit segments
         String[] bitSegments;
-
-        TreePrinter printer = new TreePrinter();
 
         //Try to initialise the file reader with the given file name.
         //If there are any problems then exit the program.
@@ -90,13 +87,16 @@ public class AdaptiveHuffmanEncoder {
                     }
                 }
 
-                printer.printTree(this.tree.getRoot());
-                for(int i = 0; i < 6; i++)
-                    System.out.println();
             }
         } catch (IOException e) {
             System.out.println("Error reading file : exiting.");
             System.exit(0);
+        }
+
+        //if the last byte is not yet complete, then fill it with an NYT buffer and write it to the stream before closing the file
+        if(currString.length() < 8) {
+            currString += this.getNYTBuffer(8 - currString.length());
+            outputHuffmanCode(currString,fout);
         }
 
         //closes the file
@@ -149,9 +149,9 @@ public class AdaptiveHuffmanEncoder {
         //if there is a problem in matching a parent to a child in one of the swaps, then the
         //ParentDoesNotMatchChildException is thrown and the program exited.
         if(isNewValue) {
-            result =  this.tree.getHuffmanCode("") + valueToBeAdded;}
+            result = this.tree.getHuffmanCode("") + valueToBeAdded;}
         else
-            result =  this.tree.getHuffmanCode(valueToBeAdded);
+            result = this.tree.getHuffmanCode(valueToBeAdded);
 
         //update tree
         try {
@@ -161,15 +161,22 @@ public class AdaptiveHuffmanEncoder {
             System.exit(0);
         }
 
+
+
+        this.printTree();
+
+
+
+
         return result;
     }
 
-    private char convertBinaryStringToChar(String strToConvert){
+    private int convertBinaryStringToChar(String strToConvert){
         //converts the binary string handed to the function into its base 10 representation.
         int integerRepresentation = Integer.parseInt(strToConvert, 2);
 
         //converts the integer into its coresponding ASCII character and returns it.
-        return (char) integerRepresentation;
+        return integerRepresentation;
     }
 
     private FileOutputStream setupOutputFile(String absolouteFileName){
@@ -214,9 +221,11 @@ public class AdaptiveHuffmanEncoder {
      * @param code The code to output.
      */
     private void outputHuffmanCode(String code, FileOutputStream fout) {
+        int toWrite = Integer.parseInt(code, 2);// & 0xff;
 
+        String bp = "";
         try {
-            fout.write(this.convertBinaryStringToChar(code));
+            fout.write(toWrite);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -234,8 +243,7 @@ public class AdaptiveHuffmanEncoder {
         //will be.
         String[] result = new String[8 / this.numberOfBitsToUse];
 
-        String bitString = Integer.toBinaryString((int) charToChange);
-
+        String bitString = String.format("%8s", Integer.toBinaryString(charToChange & 0xFF)).replace(' ', '0');
         //makes sure that bit string is 8 characters long, as the toBinaryString method
         //removes any preceding 0s from the string if there are any
         while(bitString.length() < 8){
@@ -252,6 +260,32 @@ public class AdaptiveHuffmanEncoder {
         }
 
         return result;
+    }
+
+    /**
+     * For the last byte in the file where it may not have 8 complete bits from reading the entire file,
+     * add the route to the NYT node to the end of the byte so that the decoder will start an NYT cycle at the end
+     * instead of trying to read in anything else, so that it all reads correctly.
+     * @param size the size left at the end of the string needed
+     * @return a buffer of the size given to add to the end of the last byte
+     */
+    public String getNYTBuffer(int size) {
+        String result = this.getHuffmanCode("");
+
+        if(size < result.length()) {
+            result = result.substring(0, size);
+        } else if (size > result.length()) {
+            while(result.length() < size) {
+                result += '0';
+            }
+        }
+
+        return result;
+    }
+
+    public void printTree() {
+        this.tp.printTree(this.tree.getRoot());
+        System.out.println("\n\n\n\n\n");
     }
 
 }

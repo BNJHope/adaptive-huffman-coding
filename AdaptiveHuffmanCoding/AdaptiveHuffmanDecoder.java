@@ -12,11 +12,17 @@ import java.nio.charset.Charset;
  */
 public class AdaptiveHuffmanDecoder {
 
+    TreePrinter tp = new TreePrinter();
+
     public AdaptiveHuffmanTree tree;
 
     private BufferedReader inputStream;
 
     private FileOutputStream outputStream;
+
+    public AdaptiveHuffmanDecoder(){
+        tree = new AdaptiveHuffmanTree();
+    }
 
     public void decode(String filename) throws FileNotFoundException, ParentDoesNotMatchChildException {
 
@@ -24,11 +30,13 @@ public class AdaptiveHuffmanDecoder {
 
         this.outputStream = this.setupOutputFile(filename);
 
-        AdaptiveHuffmanNode currNode = tree.getRoot();
+        AdaptiveHuffmanNode currNode = null;
 
         String currBits, NYTString = "";
 
-        int currByte, currBit;
+        int currByte;
+
+        char currBit;
 
         final int EOFConst = -1;
 
@@ -36,27 +44,41 @@ public class AdaptiveHuffmanDecoder {
 
         try {
             while((currByte = this.inputStream.read()) != EOFConst){
-                currBits = this.toBits(currByte);
+                currBits = String.format("%8s", Integer.toBinaryString(currByte & 0xff)).replace(' ', '0');
+
+                String bp = "";
 
                 while(currBits.length() != 0) {
                     currBit = currBits.charAt(0);
 
                     if(!loadingNYT) {
-                        currNode = tree.getNextNode(currNode, currBit);
-
-                        if( (currBit == 0 && this.tree.rootIsNYT()) || tree.isNYT(currNode)) {
+                        if (currNode == null) {
                             loadingNYT = true;
-                        } else if(tree.isLeaf(currNode)) {
-                            this.outputChar(currNode.getValue());
-                            this.tree.addCharToTree(currNode.getValue());
-                            currNode = this.tree.getRoot();
-                        }
+                        } else {
+                            currNode = tree.getNextNode(currNode, currBit);
+                            if ((currBit == 0 && this.tree.rootIsNYT()) || tree.isNYT(currNode)) {
+                                loadingNYT = true;
+                            } else if (tree.isLeaf(currNode)) {
+                                this.outputChar(currNode.getValue());
+                                this.tree.addCharToTree(currNode.getValue());
 
+
+                                this.printTree();
+
+
+                                currNode = this.tree.getRoot();
+                            }
+                        }
                     } else {
                         NYTString += currBit;
                         if(NYTString.length() == 8) {
                             this.outputChar(NYTString);
                             this.tree.addCharToTree(NYTString);
+
+
+                            this.printTree();
+
+
                             NYTString = "";
                             currNode = this.tree.getRoot();
                         }
@@ -147,6 +169,11 @@ public class AdaptiveHuffmanDecoder {
         }
 
         return fout;
+    }
+
+    public void printTree() {
+        this.tp.printTree(this.tree.getRoot());
+        System.out.println("\n\n\n\n\n");
     }
 
 }
