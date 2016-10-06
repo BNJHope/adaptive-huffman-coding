@@ -83,7 +83,6 @@ public class AdaptiveHuffmanTree {
             //otherwise, add a 0 to the begininng of the string
             result = parentNode.getRightChild() == currentNode ? "1" + result: "0" + result;
 
-            String bp = "";
             //if the parent node is the root node of the tree then the tree does not need to be navigated
             //anymore and so the loop can be exited
             if(this.isRoot(parentNode)){
@@ -125,6 +124,9 @@ public class AdaptiveHuffmanTree {
         if(nodeToEdit == null) {
             isNewCharacter = true;
             nodeToEdit = this.createNewNode(valueToAdd);
+
+            //add the new nodes to the weight lists, with parent node first
+            //since it has a higher ID property
             if(!this.isRoot(nodeToEdit.getParentNode()))
                 addNodeToList(nodeToEdit.getParentNode(), 1);
             addNodeToList(nodeToEdit, 1);
@@ -420,17 +422,6 @@ public class AdaptiveHuffmanTree {
 
         //since the rest of the second parent branch will be updated by the new second child being updated, we only need to update the first parent node section
         currentNode = firstParentNode;
-
-//        while(currentNode != null) {
-//            if(!this.isRoot(currentNode)) {
-//                this.nodeWeightGroups.get(currentNode.getFreq()).remove(currentNode);
-//                this.addNodeToList(currentNode, currentNode.getLeftChild().getFreq() + currentNode.getRightChild().getFreq());
-//            } else {
-//                rootNodeFound = true;
-//            }
-//            currentNode.setFreq(currentNode.getLeftChild().getFreq() + currentNode.getRightChild().getFreq());
-//            currentNode = currentNode.getParentNode();
-//        }
 
     }
 
