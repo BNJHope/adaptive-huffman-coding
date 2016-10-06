@@ -44,7 +44,7 @@ public class AdaptiveHuffmanDecoder {
                     if(!loadingNYT) {
                         currNode = tree.getNextNode(currNode, currBit);
 
-                        if(tree.isNYT(currNode)) {
+                        if( (currBit == 0 && this.tree.rootIsNYT()) || tree.isNYT(currNode)) {
                             loadingNYT = true;
                         } else if(tree.isLeaf(currNode)) {
                             this.outputChar(currNode.getValue());

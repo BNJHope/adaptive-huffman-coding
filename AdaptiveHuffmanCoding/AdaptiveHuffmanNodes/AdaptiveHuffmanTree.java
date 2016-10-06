@@ -69,6 +69,8 @@ public class AdaptiveHuffmanTree {
         //otherwise, get the Huffman code for the string passed to the function
         if(valueToGet == "") {
             currentNode = this.NYTNode;
+            if(this.isRoot(this.NYTNode))
+                return "0";
         } else {
             currentNode = this.nodeArray.get(valueToGet);
         }
@@ -105,10 +107,7 @@ public class AdaptiveHuffmanTree {
      * new value node is added as its sibling.
      * @param valueToAdd The value to add to the tree.
      */
-    public boolean addCharToTree(String valueToAdd) throws ParentDoesNotMatchChildException {
-
-        //determines whether the value read by the function is new or not
-        boolean isNewCharacter = false;
+    public void addCharToTree(String valueToAdd) throws ParentDoesNotMatchChildException {
 
         //tries to find if the value is already in the tree by checking all of the child nodes.
         AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(valueToAdd);
@@ -122,7 +121,6 @@ public class AdaptiveHuffmanTree {
         //if it is a new value for the tree then add it to NYT.
         //otherwise, check to see if the node needs to be replaced anywhere before incrementing frequency.
         if(nodeToEdit == null) {
-            isNewCharacter = true;
             nodeToEdit = this.createNewNode(valueToAdd);
 
             //add the new nodes to the weight lists, with parent node first
@@ -130,6 +128,7 @@ public class AdaptiveHuffmanTree {
             if(!this.isRoot(nodeToEdit.getParentNode()))
                 addNodeToList(nodeToEdit.getParentNode(), 1);
             addNodeToList(nodeToEdit, 1);
+            nodeToEdit = nodeToEdit.getParentNode();
         } else {
             this.updateNode(nodeToEdit, nodeToEdit.getFreq() + 1);
             nodeToEdit.incrementFrequency();
@@ -137,6 +136,10 @@ public class AdaptiveHuffmanTree {
 
         //reference must start at the nodeToEdit segment when moving up the tree
         nodeHolder = nodeToEdit;
+
+        if(this.isRoot(nodeToEdit)) {
+            rootNodeFound = true;
+        }
 
         //while there is a parent node
         while(!rootNodeFound) {
@@ -154,7 +157,6 @@ public class AdaptiveHuffmanTree {
                 rootNodeFound = true;
         }
 
-        return isNewCharacter;
     }
 
     /**
@@ -316,7 +318,6 @@ public class AdaptiveHuffmanTree {
      * @return True if it has the highest ID in the weight group, false if not and thus needs to be swapped.
      */
     private boolean isHighestInWeightGroup(AdaptiveHuffmanNode nodeToCheck){
-        //gets the last element of the weight group
         AdaptiveHuffmanNode highestIdNodeInWeightGroup = this.nodeWeightGroups.get(nodeToCheck.getFreq()).getLast();
 
         //returns whether the reference to the highest weight in the group matches the reference to the node handed
@@ -425,19 +426,57 @@ public class AdaptiveHuffmanTree {
 
     }
 
+    /**
+     * Returns the root of the tree
+     * @return the root of the tree
+     */
     public AdaptiveHuffmanNode getRoot(){
         return this.root;
     }
 
+    /**
+     * Gets the next node of the tree when given a node and the index of either 0 or 1 for its left or right child
+     * @param prev The previous node
+     * @param index Value of 0 or 1 to determine if the left or right child should be selected
+     * @return The left child if inde = 0, right child if index = 1
+     */
     public AdaptiveHuffmanNode getNextNode(AdaptiveHuffmanNode prev, int index) {
         return index == 0 ? prev.getLeftChild() : prev.getRightChild();
     }
 
+    /**
+     * Determines whether the given node is the NYT node of the tree
+     * @param node The node to check if it is the NYT node or not
+     * @return True if it is the NYT node, false if it is not.
+     */
     public boolean isNYT(AdaptiveHuffmanNode node) {
         return node == this.NYTNode;
     }
 
+    /**
+     * Determines whether a node is a leaf node or not by checking to see if it has any children or not.
+     * @param node The node to check.
+     * @return True if it has no children and thus is a leaf node, false if it is not.
+     */
     public boolean isLeaf(AdaptiveHuffmanNode node) {
         return node.getLeftChild() == null;
+    }
+
+    /**
+     * Determines if the string exists in the hashmap as a key yet or not, which in turn determines
+     * if the string has been seen in the tree or not yet
+     * @param str The string to check
+     * @return True if it exists and therefore has already been seen, false if not.
+     */
+    public boolean stringExists(String str) {
+        return this.nodeArray.containsKey(str);
+    }
+
+    /**
+     * Determines whether the root of the tree is also the NYT node.
+     * @return True if the NYT node is the root, false if it is not
+     */
+    public boolean rootIsNYT() {
+        return this.isRoot(this.NYTNode);
     }
 }

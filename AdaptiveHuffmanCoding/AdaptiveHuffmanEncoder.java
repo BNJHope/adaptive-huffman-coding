@@ -139,23 +139,29 @@ public class AdaptiveHuffmanEncoder {
      */
     private String getHuffmanCode(String valueToBeAdded) {
 
+        String result;
+
         //boolean to determine if the character that was added is a new character or not
         boolean isNewValue = false;
 
+        isNewValue = !this.tree.stringExists(valueToBeAdded);
         //tries to add the value to the tree or increment its frequency if it already exists.
         //if there is a problem in matching a parent to a child in one of the swaps, then the
         //ParentDoesNotMatchChildException is thrown and the program exited.
+        if(isNewValue) {
+            result =  this.tree.getHuffmanCode("") + valueToBeAdded;}
+        else
+            result =  this.tree.getHuffmanCode(valueToBeAdded);
+
+        //update tree
         try {
-            isNewValue = this.tree.addCharToTree(valueToBeAdded);
+            this.tree.addCharToTree(valueToBeAdded);
         } catch (ParentDoesNotMatchChildException e) {
             System.err.println("Parent does not match child exception found at value : " + valueToBeAdded);
             System.exit(0);
         }
 
-        if(isNewValue)
-            return this.tree.getHuffmanCode("") + valueToBeAdded;
-        else
-            return this.tree.getHuffmanCode(valueToBeAdded);
+        return result;
     }
 
     private char convertBinaryStringToChar(String strToConvert){
