@@ -2,7 +2,6 @@ package AdaptiveHuffmanCoding;
 
 import AdaptiveHuffmanCoding.AdaptiveHuffmanNodes.AdaptiveHuffmanNode;
 import AdaptiveHuffmanCoding.AdaptiveHuffmanNodes.AdaptiveHuffmanTree;
-import AdaptiveHuffmanCoding.AdaptiveHuffmanNodes.ParentDoesNotMatchChildException;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -12,21 +11,46 @@ import java.nio.charset.Charset;
  */
 public class AdaptiveHuffmanDecoder {
 
+    /**
+     * An object for printing the tree.
+     */
     TreePrinter tp = new TreePrinter();
 
+    /**
+     * The tree which is being manipulated by the decoder.
+     */
     public AdaptiveHuffmanTree tree;
 
-    private BufferedReader inputStream;
+    /**
+     * The input stream to read from the compressed file.
+     */
+    private FileInputStream inputStream;
 
+    /**
+     * The output stream to write to the decompressed file
+     */
     private FileOutputStream outputStream;
 
+    /**
+     * Constructor method.
+     */
     public AdaptiveHuffmanDecoder(){
         tree = new AdaptiveHuffmanTree();
     }
 
-    public void decode(String filename) throws FileNotFoundException, ParentDoesNotMatchChildException {
+    /**
+     * Decodes the given compressed file.
+     * @param filename
+     */
+    public void decode(String filename) {
 
-        this.inputStream = this.setupInputFile(filename);
+        try {
+            this.inputStream = this.setupInputFile(filename);
+        } catch (FileNotFoundException e) {
+            System.err.println("unable to find file : " + filename);
+            System.err.println("exiting");
+            System.exit(0);
+        }
 
         this.outputStream = this.setupOutputFile(filename);
 
@@ -46,8 +70,7 @@ public class AdaptiveHuffmanDecoder {
             while((currByte = this.inputStream.read()) != EOFConst){
                 currBits = String.format("%8s", Integer.toBinaryString(currByte & 0xff)).replace(' ', '0');
 
-                String bp = "";
-
+                System.out.println(currBits + "\t\t" + currByte);
                 while(currBits.length() != 0) {
                     currBit = currBits.charAt(0);
 
@@ -61,11 +84,6 @@ public class AdaptiveHuffmanDecoder {
                             } else if (tree.isLeaf(currNode)) {
                                 this.outputChar(currNode.getValue());
                                 this.tree.addCharToTree(currNode.getValue());
-
-
-                                this.printTree();
-
-
                                 currNode = this.tree.getRoot();
                             }
                         }
@@ -74,13 +92,9 @@ public class AdaptiveHuffmanDecoder {
                         if(NYTString.length() == 8) {
                             this.outputChar(NYTString);
                             this.tree.addCharToTree(NYTString);
-
-
-                            this.printTree();
-
-
                             NYTString = "";
                             currNode = this.tree.getRoot();
+                            loadingNYT = false;
                         }
 
                     }
@@ -121,11 +135,11 @@ public class AdaptiveHuffmanDecoder {
     }
 
     public void outputChar(String byteToConvert) throws IOException {
-        byte charToWrite = (byte) Integer.parseInt(byteToConvert, 2);
+        int charToWrite = Integer.parseInt(byteToConvert, 2);
         this.outputStream.write(charToWrite);
     }
 
-    private BufferedReader setupInputFile(String inputFileName) throws FileNotFoundException {
+    private FileInputStream setupInputFile(String inputFileName) throws FileNotFoundException {
         //Encoding needed for an input stream reader - using system default as default.
         Charset encoding = Charset.defaultCharset();
 
@@ -133,12 +147,9 @@ public class AdaptiveHuffmanDecoder {
         File fileToReturn = new File(inputFileName);
 
         //The InputStream from the file.
-        InputStream fileStream = new FileInputStream(fileToReturn);
+        FileInputStream fileStream = new FileInputStream(fileToReturn);
 
-        //The buffered reader for the file.
-        BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileStream, encoding));
-
-        return fileReader;
+        return fileStream;
     }
 
     private FileOutputStream setupOutputFile(String absolouteFileName){

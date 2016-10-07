@@ -116,7 +116,7 @@ public class AdaptiveHuffmanNode {
      * @return The left child of this node.
      */
     public AdaptiveHuffmanNode getLeftChild() {
-        return leftChild;
+        return this.leftChild;
     }
 
     /**
@@ -132,7 +132,7 @@ public class AdaptiveHuffmanNode {
      * @return The right child of this node.
      */
     public AdaptiveHuffmanNode getRightChild() {
-        return rightChild;
+        return this.rightChild;
     }
 
     /**

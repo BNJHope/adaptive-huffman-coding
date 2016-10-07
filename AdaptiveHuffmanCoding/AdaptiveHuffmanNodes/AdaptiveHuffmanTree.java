@@ -107,7 +107,7 @@ public class AdaptiveHuffmanTree {
      * new value node is added as its sibling.
      * @param valueToAdd The value to add to the tree.
      */
-    public void addCharToTree(String valueToAdd) throws ParentDoesNotMatchChildException {
+    public void addCharToTree(String valueToAdd) {
 
         //tries to find if the value is already in the tree by checking all of the child nodes.
         AdaptiveHuffmanNode nodeToEdit = this.getNodeFromTree(valueToAdd);
@@ -166,7 +166,7 @@ public class AdaptiveHuffmanTree {
      * @param valueToAdd The value to add to the tree.
      * @return A reference to the new node which was just added.
      */
-    private AdaptiveHuffmanNode createNewNode(String valueToAdd) throws ParentDoesNotMatchChildException {
+    private AdaptiveHuffmanNode createNewNode(String valueToAdd) {
 
         //the new node to be added to the tree.
         AdaptiveHuffmanNode newNode = new AdaptiveHuffmanNode(this.nextNodeId, valueToAdd);
@@ -192,8 +192,6 @@ public class AdaptiveHuffmanTree {
             } else if (this.NYTNode.getParentNode().getRightChild() == this.NYTNode) {
                 newParentNode.setParentNode(this.NYTNode.getParentNode());
                 this.NYTNode.getParentNode().setRightChild(newParentNode);
-            } else {
-                throw new ParentDoesNotMatchChildException();
             }
         } else {
             this.root = newParentNode;
@@ -214,7 +212,7 @@ public class AdaptiveHuffmanTree {
      * rest of the tree was already updated.
      * @param node
      */
-    private void updateNode(AdaptiveHuffmanNode node, int newFreq) throws ParentDoesNotMatchChildException {
+    private void updateNode(AdaptiveHuffmanNode node, int newFreq) {
 
         LinkedList<AdaptiveHuffmanNode> listToEdit;
 
@@ -249,7 +247,7 @@ public class AdaptiveHuffmanTree {
      * @param node The node to change list position for.
      * @param indexFromEnd How far in from the end the node is that needs to be removed
      */
-    public void editListPosition(AdaptiveHuffmanNode node, int indexFromEnd, int newFreq) throws ParentDoesNotMatchChildException {
+    public void editListPosition(AdaptiveHuffmanNode node, int indexFromEnd, int newFreq) {
 
         //get the linkedlist which holds the node passed to the function.
         LinkedList<AdaptiveHuffmanNode> firstList = this.nodeWeightGroups.get(node.getFreq());
@@ -361,7 +359,7 @@ public class AdaptiveHuffmanTree {
      * @param firstNode The first node to be swapped.
      * @param secondNode The second node to be swapped.
      */
-    private void swapNodesInTree(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
+    private void swapNodesInTree(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) {
 
         //swap the ids of the two nodes first
         this.swapIds(firstNode, secondNode);
@@ -374,10 +372,9 @@ public class AdaptiveHuffmanTree {
      * Swaps the parents of the two nodes handed to the function.
      * @param firstNode The first node to be swapped.
      * @param secondNode The second node to be swapped.
-     * @throws ParentDoesNotMatchChildException If there is an error in figuring out if a node is a either the left or right child of a parent,
      * then this exception is thrown.
      */
-    private void swapParents(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) throws ParentDoesNotMatchChildException {
+    private void swapParents(AdaptiveHuffmanNode firstNode, AdaptiveHuffmanNode secondNode) {
         //the parent node of the first node
         AdaptiveHuffmanNode firstParentNode = firstNode.getParentNode();
 
@@ -396,11 +393,6 @@ public class AdaptiveHuffmanTree {
         else if(firstParentNode.getLeftChild() == firstNode)
             firstParentNode.setLeftChild(secondNode);
 
-            //if neither of its children are equal to the first node then throw an exception since one of the children of
-            //the parent node should have been the first child
-        else
-            throw new ParentDoesNotMatchChildException();
-
         //if the second node's parent node has the right child as the second node then make sure the new right child is
         //the first node
         if(secondParentNode.getRightChild() == secondNode)
@@ -411,10 +403,6 @@ public class AdaptiveHuffmanTree {
         else if(secondParentNode.getLeftChild() == secondNode)
             secondParentNode.setLeftChild(firstNode);
 
-            //if neither of its children are equal to the first node then throw an exception since one of the children of
-            //the parent node should have been the first child
-        else
-            throw new ParentDoesNotMatchChildException();
 
     }
 
@@ -459,7 +447,16 @@ public class AdaptiveHuffmanTree {
      * @return The left child if inde = 0, right child if index = 1
      */
     public AdaptiveHuffmanNode getNextNode(AdaptiveHuffmanNode prev, int index) {
-        return index == 0 ? prev.getLeftChild() : prev.getRightChild();
+        AdaptiveHuffmanNode result;
+        String bp = "";
+        if(index == '0'){
+            bp = "";
+            result = prev.getLeftChild();}
+        else{
+            bp = "";
+            result = prev.getRightChild();}
+        bp = "";
+        return result;
     }
 
     /**

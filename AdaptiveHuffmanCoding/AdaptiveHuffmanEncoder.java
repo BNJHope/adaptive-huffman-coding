@@ -1,7 +1,6 @@
 package AdaptiveHuffmanCoding;
 
 import AdaptiveHuffmanCoding.AdaptiveHuffmanNodes.AdaptiveHuffmanTree;
-import AdaptiveHuffmanCoding.AdaptiveHuffmanNodes.ParentDoesNotMatchChildException;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -45,7 +44,7 @@ public class AdaptiveHuffmanEncoder {
         int nextCharInFile;
 
         //The reader of the file given to this function.
-        BufferedReader fileReader = null;
+        FileInputStream fileReader = null;
 
         //The value that is read from the reader when it has reached the end of file.
         final int EOFConst = -1;
@@ -116,7 +115,7 @@ public class AdaptiveHuffmanEncoder {
      * @throws FileNotFoundException If the given file name does not correspond to a file then
      * this exception is thrown.
      */
-    private BufferedReader getFileReader(String filename) throws FileNotFoundException {
+    private FileInputStream getFileReader(String filename) throws FileNotFoundException {
 
         //Encoding needed for an input stream reader - using system default as default.
         Charset encoding = Charset.defaultCharset();
@@ -125,12 +124,9 @@ public class AdaptiveHuffmanEncoder {
         File fileToReturn = new File(filename);
 
         //The InputStream from the file.
-        InputStream fileStream = new FileInputStream(fileToReturn);
+        FileInputStream fileStream = new FileInputStream(fileToReturn);
 
-        //The buffered reader for the file.
-        BufferedReader fileReader = new BufferedReader(new InputStreamReader(fileStream, encoding));
-
-        return fileReader;
+        return fileStream;
     }
 
     /**
@@ -147,37 +143,17 @@ public class AdaptiveHuffmanEncoder {
         isNewValue = !this.tree.stringExists(valueToBeAdded);
         //tries to add the value to the tree or increment its frequency if it already exists.
         //if there is a problem in matching a parent to a child in one of the swaps, then the
-        //ParentDoesNotMatchChildException is thrown and the program exited.
         if(isNewValue) {
             result = this.tree.getHuffmanCode("") + valueToBeAdded;}
         else
             result = this.tree.getHuffmanCode(valueToBeAdded);
 
         //update tree
-        try {
-            this.tree.addCharToTree(valueToBeAdded);
-        } catch (ParentDoesNotMatchChildException e) {
-            System.err.println("Parent does not match child exception found at value : " + valueToBeAdded);
-            System.exit(0);
-        }
-
-
-
-        this.printTree();
-
-
-
+        this.tree.addCharToTree(valueToBeAdded);
 
         return result;
     }
 
-    private int convertBinaryStringToChar(String strToConvert){
-        //converts the binary string handed to the function into its base 10 representation.
-        int integerRepresentation = Integer.parseInt(strToConvert, 2);
-
-        //converts the integer into its coresponding ASCII character and returns it.
-        return integerRepresentation;
-    }
 
     private FileOutputStream setupOutputFile(String absolouteFileName){
 
@@ -221,9 +197,7 @@ public class AdaptiveHuffmanEncoder {
      * @param code The code to output.
      */
     private void outputHuffmanCode(String code, FileOutputStream fout) {
-        int toWrite = Integer.parseInt(code, 2);// & 0xff;
-
-        String bp = "";
+        int toWrite = Integer.parseInt(code, 2) & 0xff;
         try {
             fout.write(toWrite);
         } catch (IOException e) {
