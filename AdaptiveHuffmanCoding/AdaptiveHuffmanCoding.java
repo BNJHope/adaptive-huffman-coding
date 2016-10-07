@@ -4,11 +4,11 @@ package AdaptiveHuffmanCoding;
 public class AdaptiveHuffmanCoding {
 
     public static void main(String[] args){
-        if(args[0] == "-e") {
+        if(args[0].equals("-e")) {
             encode(args[1], args[2]);
-        } else if (args[0] == "-d") {
+        } else if (args[0].equals("-d")) {
             decode(args[1]);
-        } else if (args[0] == "-p") {
+        } else if (args[0].equals("-p")) {
             encodeAndDecode(args[1]);
         }
     }
@@ -22,18 +22,16 @@ public class AdaptiveHuffmanCoding {
 
     public static void decode(String fileName) {
         AdaptiveHuffmanDecoder decoder = new AdaptiveHuffmanDecoder();
-
-            decoder.decode(fileName);
-
+        System.out.println("Starting decoding");
+        decoder.decode(fileName);
+        System.out.println("Finished decoding");
     }
 
     public static void encodeAndDecode(String fileName) {
-        AdaptiveHuffmanEncoder encoder = new AdaptiveHuffmanEncoder(8);
-        AdaptiveHuffmanDecoder decoder = new AdaptiveHuffmanDecoder();
         String[] compressedFileNameComps = fileName.split(".", 2);
         String compressedFileName = fileName.substring(0, fileName.lastIndexOf('/')) + compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
 
-        encoder.encode(fileName);
-        decoder.decode(compressedFileName);
+        encode(fileName, "8");
+        decode(compressedFileName);
     }
 }

@@ -70,7 +70,6 @@ public class AdaptiveHuffmanDecoder {
             while((currByte = this.inputStream.read()) != EOFConst){
                 currBits = String.format("%8s", Integer.toBinaryString(currByte & 0xff)).replace(' ', '0');
 
-                System.out.println(currBits + "\t\t" + currByte);
                 while(currBits.length() != 0) {
                     currBit = currBits.charAt(0);
 
