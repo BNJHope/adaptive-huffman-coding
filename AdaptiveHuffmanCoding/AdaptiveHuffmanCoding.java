@@ -28,8 +28,16 @@ public class AdaptiveHuffmanCoding {
     }
 
     public static void encodeAndDecode(String fileName) {
-        String[] compressedFileNameComps = fileName.split(".", 2);
-        String compressedFileName = fileName.substring(0, fileName.lastIndexOf('/')) + compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
+        String path = fileName.substring(0, fileName.lastIndexOf("/"));
+        //retrieve the raw file name by removing everything before the absoloute filname
+        String rawFileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+        //The original file name split into the parts before and after the first "." so that the "compressed" file name part
+        //can be inserted
+        String[] compressedFileNameComps = rawFileName.split("\\.", 2);
+
+        //The compressed file name, made up of the file name components from the original file name and the compressed
+        //file path keyword added
+        String compressedFileName = path + "/" + compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
 
         encode(fileName, "8");
         decode(compressedFileName);
