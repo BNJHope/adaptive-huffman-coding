@@ -8,11 +8,12 @@
     <property name="main-class"  value="AdaptiveHuffmanCoding.AdaptiveHuffmanCoding"/>
 
     <!--Paths to all the test files-->
-    <property name="shakespeare-file-path" value="./test_items/complete_shakespeare_works.txt"/>
-    <property name="duck-picture-path" value="./test_items/duck.bmp"/>
-    <property name="lorem-ipsum-text-path" value="./test_items/loremipsum.txt"/>
-    <property name="test-pdf-path" value="./test_items/test_document_pdf.pdf"/>
-    <property name="parrot-picture-path" value="./test_items/testpic.jpg"/>
+    <property name="blue-rondo-path" value="./test_items/blue_rondo/Dave Brubeck Quartet - Blue Rondo A La Turk.mp3"/>
+    <property name="shakespeare-file-path" value="./test_items/complete_shakespeare_works/complete_shakespeare_works.txt"/>
+    <property name="duck-picture-path" value="./test_items/duckbmp/duck.bmp"/>
+    <property name="lorem-ipsum-text-path" value="./test_items/loremipsum/loremipsum.txt"/>
+    <property name="test-pdf-path" value="./test_items/pdfdoc/test_document_pdf.pdf"/>
+    <property name="parrot-picture-path" value="./test_items/jpg/testpic.jpg"/>
 
     <!--List of all the file paths -->
     <property name="test-files" value="${shakespeare-file-path},${duck-picture-path},${lorem-ipsum-text-path},${test-pdf-path},${parrot-picture-path}" />
@@ -89,6 +90,10 @@
             <arg value="-p"/>
             <arg value="${parrot-picture-path}"/>
         </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${blue-rondo-path}"/>
+        </java>
     </target>
 
     <!-- Encode all files with the 4 bit in tree compression -->
@@ -116,6 +121,11 @@
         <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
             <arg value="-e"/>
             <arg value="${parrot-picture-path}"/>
+            <arg value="4"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${blue-rondo-path}"/>
             <arg value="4"/>
         </java>
     </target>
@@ -147,6 +157,11 @@
             <arg value="${parrot-picture-path}"/>
             <arg value="2"/>
         </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${blue-rondo-path}"/>
+            <arg value="2"/>
+        </java>
     </target>
 
     <!-- Carry out all compression and decompression tasks -->
@@ -157,7 +172,7 @@
     <!-- Delete all .compressed. and .decompressed. files-->
     <target name="clean-test-directory">
         <delete>
-            <fileset dir="./test_items" includes="*.*compressed*.*"/>
+            <fileset dir="./test_items/*" includes="*.*compressed*.*"/>
         </delete>
     </target>
 
