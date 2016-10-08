@@ -1,4 +1,4 @@
-<project name = "AdaptiveHuffmanCoding" basedir="." default="main">
+<project name = "AdaptiveHuffmanCoding" basedir="." default="create-tests">
 
     <!--Variables for paths-->
     <property name = "src.dir" value = "AdaptiveHuffmanCoding"/>
@@ -20,6 +20,7 @@
     <!--Instructions for cleaning anything that was built-->
     <target name="clean">
         <delete dir="${build.dir}"/>
+        <delete file="${jar.dir}/${ant.project.name}.jar"/>
     </target>
 
     <!--Compiles Java source code into .class files-->

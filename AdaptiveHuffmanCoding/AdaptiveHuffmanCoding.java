@@ -15,14 +15,14 @@ public class AdaptiveHuffmanCoding {
 
     public static void encode(String readFilename, String encodingSize){
         AdaptiveHuffmanEncoder encoder = new AdaptiveHuffmanEncoder(Integer.parseInt(encodingSize));
-        System.out.println("Starting encoding");
+        System.out.println("Starting encoding " + readFilename + " with " + encodingSize + " bit tree node representation.");
         encoder.encode(readFilename);
         System.out.println("Finished encoding");
     }
 
     public static void decode(String fileName) {
         AdaptiveHuffmanDecoder decoder = new AdaptiveHuffmanDecoder();
-        System.out.println("Starting decoding");
+        System.out.println("Starting decoding " + fileName);
         decoder.decode(fileName);
         System.out.println("Finished decoding");
     }
