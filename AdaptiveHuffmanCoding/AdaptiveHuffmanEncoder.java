@@ -166,7 +166,7 @@ public class AdaptiveHuffmanEncoder {
 
         //The compressed file name, made up of the file name components from the original file name and the compressed
         //file path keyword added
-        String compressedFileName = path + "/" + compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
+        String compressedFileName = path + "/" + compressedFileNameComps[0] + ".compressed" + this.numberOfBitsToUse +"." + compressedFileNameComps[1];
 
         //create new file
         File outputFile = new File(compressedFileName);

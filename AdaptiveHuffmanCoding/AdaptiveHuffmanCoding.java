@@ -37,7 +37,7 @@ public class AdaptiveHuffmanCoding {
 
         //The compressed file name, made up of the file name components from the original file name and the compressed
         //file path keyword added
-        String compressedFileName = path + "/" + compressedFileNameComps[0] + ".compressed." + compressedFileNameComps[1];
+        String compressedFileName = path + "/" + compressedFileNameComps[0] + ".compressed8." + compressedFileNameComps[1];
 
         encode(fileName, "8");
         decode(compressedFileName);

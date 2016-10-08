@@ -1,20 +1,34 @@
 <project name = "AdaptiveHuffmanCoding" basedir="." default="main">
 
+    <!--Variables for paths-->
     <property name = "src.dir" value = "AdaptiveHuffmanCoding"/>
     <property name = "build.dir" value = "build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="jar.dir"     value="${build.dir}/jar"/>
+    <property name="jar.dir"     value="."/>
     <property name="main-class"  value="AdaptiveHuffmanCoding.AdaptiveHuffmanCoding"/>
 
+    <!--Paths to all the test files-->
+    <property name="shakespeare-file-path" value="./test_items/complete_shakespeare_works.txt"/>
+    <property name="duck-picture-path" value="./test_items/duck.bmp"/>
+    <property name="lorem-ipsum-text-path" value="./test_items/loremipsum.txt"/>
+    <property name="test-pdf-path" value="./test_items/test_document_pdf.pdf"/>
+    <property name="parrot-picture-path" value="./test_items/testpic.jpg"/>
+
+    <!--List of all the file paths -->
+    <property name="test-files" value="${shakespeare-file-path},${duck-picture-path},${lorem-ipsum-text-path},${test-pdf-path},${parrot-picture-path}" />
+
+    <!--Instructions for cleaning anything that was built-->
     <target name="clean">
         <delete dir="${build.dir}"/>
     </target>
 
+    <!--Compiles Java source code into .class files-->
     <target name = "compile">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}"/>
     </target>
 
+    <!--Compiles source code files into a Java jar-->
     <target name="jar" depends="compile">
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
@@ -24,12 +38,126 @@
         </jar>
     </target>
 
-    <target name="run" depends="jar">
-        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
-    </target>
-
+    <!--Runs clean and then constructs the jar-->
     <target name="build-clean" depends="clean, jar"/>
 
-    <target name="main" depends="clean,run"/>
+    <!--Runs the encoding process on a given file, with the given bits used-->
+    <target name="encode">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${arg0}"/>
+            <arg value="${arg1}"/>
+        </java>
+    </target>
+
+    <!--Runs the decoding process on a given file-->
+    <target name="decode">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-d"/>
+            <arg value="${arg0}"/>
+        </java>
+    </target>
+
+    <!--Encodes a file with 8 bits in the tree and decodes it afterwards-->
+    <target name="encode-and-decode">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${arg0}"/>
+        </java>
+    </target>
+
+    <!--Make an encoding and decoding of all files -->
+    <target name="encode-and-decode-test-items">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${shakespeare-file-path}"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${duck-picture-path}"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${lorem-ipsum-text-path}"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${test-pdf-path}"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-p"/>
+            <arg value="${parrot-picture-path}"/>
+        </java>
+    </target>
+
+    <!-- Encode all files with the 4 bit in tree compression -->
+    <target name="encode-test-items-4bit">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${shakespeare-file-path}"/>
+            <arg value="4"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${duck-picture-path}"/>
+            <arg value="4"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${lorem-ipsum-text-path}"/>
+            <arg value="4"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${test-pdf-path}"/>
+            <arg value="4"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${parrot-picture-path}"/>
+            <arg value="4"/>
+        </java>
+    </target>
+
+    <!-- Encode all files with the 2 bit in tree compression -->
+    <target name="encode-test-items-2bit">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${shakespeare-file-path}"/>
+            <arg value="2"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${duck-picture-path}"/>
+            <arg value="2"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${lorem-ipsum-text-path}"/>
+            <arg value="2"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${test-pdf-path}"/>
+            <arg value="2"/>
+        </java>
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true">
+            <arg value="-e"/>
+            <arg value="${parrot-picture-path}"/>
+            <arg value="2"/>
+        </java>
+    </target>
+
+    <!-- Carry out all compression and decompression tasks -->
+    <target name="create-tests" depends="build-clean, encode-and-decode-test-items, encode-test-items-4bit, encode-test-items-2bit">
+
+    </target>
+
+    <!-- Delete all .compressed. and .decompressed. files-->
+    <target name="clean-test-directory">
+        <delete>
+            <fileset dir="./test_items" includes="*.*compressed*.*"/>
+        </delete>
+    </target>
 
 </project>
