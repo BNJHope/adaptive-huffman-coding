@@ -3,8 +3,8 @@
     <!--Variables for paths-->
     <property name = "src.dir" value = "AdaptiveHuffmanCoding"/>
     <property name = "build.dir" value = "build"/>
-    <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="jar.dir"     value="."/>
+    <property name= "classes.dir" value="${build.dir}/classes"/>
+    <property name= "jar.dir"     value="."/>
     <property name="main-class"  value="AdaptiveHuffmanCoding.AdaptiveHuffmanCoding"/>
 
     <!--Paths to all the test files-->
@@ -172,7 +172,22 @@
     <!-- Delete all .compressed. and .decompressed. files-->
     <target name="clean-test-directory">
         <delete>
-            <fileset dir="./test_items/*" includes="*.*compressed*.*"/>
+            <fileset dir="./test_items/blue_rondo" includes="*.*compressed*.*"/>
+        </delete>
+        <delete>
+            <fileset dir="./test_items/complete_shakespeare_works" includes="*.*compressed*.*"/>
+        </delete>
+        <delete>
+            <fileset dir="./test_items/duckbmp" includes="*.*compressed*.*"/>
+        </delete>
+        <delete>
+            <fileset dir="./test_items/jpg" includes="*.*compressed*.*"/>
+        </delete>
+        <delete>
+            <fileset dir="./test_items/loremipsum" includes="*.*compressed*.*"/>
+        </delete>
+        <delete>
+            <fileset dir="./test_items/pdfdoc" includes="*.*compressed*.*"/>
         </delete>
     </target>
 

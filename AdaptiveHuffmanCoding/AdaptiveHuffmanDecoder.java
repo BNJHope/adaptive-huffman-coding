@@ -154,7 +154,7 @@ public class AdaptiveHuffmanDecoder {
     private FileOutputStream setupOutputFile(String absolouteFileName){
 
         //name of new file replaces compressed with decompressed in title
-        String decompressedFileName = absolouteFileName.replace(".compressed.", ".decompressed.");
+        String decompressedFileName = absolouteFileName.replace(".compressed8.", ".decompressed.");
 
         //create new file
         File outputFile = new File(decompressedFileName);
