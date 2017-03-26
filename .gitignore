@@ -1,2 +1,6 @@
 .idea
 *.class
+*.jar
+build/
+test_items/blue_rondo/
+test_items/pdfdoc
