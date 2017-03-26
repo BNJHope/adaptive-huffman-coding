@@ -4,3 +4,5 @@
 build/
 test_items/blue_rondo/
 test_items/pdfdoc
+test_items/**/*.compressed.*
+test_items/**/*.decompressed.*
